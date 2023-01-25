@@ -24,7 +24,7 @@ function CarLot({car,isMy}) {
 			...user,
 			balance: newBalance,
 			car: myCars,
-            energy: myEnergy,
+            maxEnergy: myEnergy,
             time: myTime,
 		}
 		dispatch(setUser(fields))
@@ -40,7 +40,7 @@ function CarLot({car,isMy}) {
 			...user,
 			balance: newBalance,
 			car: myCars1.map(item => item._id),
-            energy: myEnergy,
+            maxEnergy: myEnergy,
             time: myTime,
 		}
 		dispatch(setUser(fields))
@@ -65,8 +65,8 @@ function CarLot({car,isMy}) {
             </Typography>}
             {isMy ? <Typography gutterBottom variant="body2"> Цена: {car.price} K</Typography> : <Typography gutterBottom variant="subtitle2">{car.name}</Typography>}
             <Typography variant="caption" color="text.secondary">
-                Плюс к времени:<b>{car.time}ч</b><br/>
-                Плюс к энергии: <b>{car.energy}Ккал</b><br/>
+                Время: <b>+{car.time}ч</b><br/>
+                Энергия: <b>+{car.energy}</b><br/>
                 Затраты в месяц: <b>{car.expenses} К</b><br/>
                 Цена продажи: <b>{car.sellPrice} К</b><br/>
             </Typography>

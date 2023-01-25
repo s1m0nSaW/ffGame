@@ -1,11 +1,11 @@
 import { Toolbar, Box, Tab, Tabs } from '@mui/material'
 import React from 'react'
 
-import Report from './bank/Report.jsx';
-import Credit from './bank/Credit.jsx';
-import Deposit from './bank/Deposit.jsx';
+import Home from './profile/Home'
+import Friends from './profile/Friends'
+import Raiting from './profile/Raiting'
 
-function Bank() {
+function Profile() {
   const [ value, setValue ] = React.useState("one")
 
   const handleChange = (event, newValue) => {
@@ -20,17 +20,17 @@ function Bank() {
       textColor="secondary"
       indicatorColor="secondary"
       >
-        <Tab value="one" label="Бухгалтерия" />
-        <Tab value="two" label="Кредиты" />
-        <Tab value="three" label="Вклады" />
+        <Tab value="one" label="Собственность" />
+        <Tab value="two" label="Друзья" />
+        <Tab value="three" label="Рейтинг" />
       </Tabs>
       
-      {value === 'one'&&<Report/>}
-      {value === 'two'&&<Credit/>}
-      {value === 'three'&&<Deposit/>}
+      {value === 'one'&&<Home/>}
+      {value === 'two'&&<Friends/>}
+      {value === 'three'&&<Raiting/>}
       <Toolbar/>
     </Box>
   )
 }
 
-export default Bank
+export default Profile

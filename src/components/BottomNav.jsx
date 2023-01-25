@@ -2,10 +2,10 @@ import { BottomNavigation, BottomNavigationAction, Paper } from '@mui/material'
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
 
-import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
+import HandshakeIcon from '@mui/icons-material/Handshake';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import HomeIcon from '@mui/icons-material/Home';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 function BottomNav() {
     const navigate = useNavigate()
@@ -20,10 +20,10 @@ function BottomNav() {
             value={value}
             onChange={handleChange}
         >
-            <BottomNavigationAction label="Главная" value='main' icon={<MonetizationOnOutlinedIcon/>}/>
-            <BottomNavigationAction label="Магазин" value='property' icon={<ShoppingCartOutlinedIcon/>}/>
-            <BottomNavigationAction label="Банк" value='bank' icon={<AccountBalanceOutlinedIcon/>}/>
-            <BottomNavigationAction label='Профиль' value='home' icon={<HomeOutlinedIcon/>}/>
+            <BottomNavigationAction label="Главная" value='main' icon={<MonetizationOnIcon/>}/>
+            <BottomNavigationAction label="Сделки" value='property' icon={<HandshakeIcon/>}/>
+            <BottomNavigationAction label="Банк" value='bank' icon={<AccountBalanceIcon/>}/>
+            <BottomNavigationAction label='Профиль' value='profile' icon={<HomeIcon/>}/>
 
         </BottomNavigation></Paper>
     )

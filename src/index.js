@@ -10,11 +10,13 @@ import { store } from './redux/store.js'
 bridge.send("VKWebAppInit");
 
 ReactDOM.render(
+  <React.StrictMode>
   <BrowserRouter>
     <Provider store={store}>
       <App />
     </Provider>  
   </BrowserRouter>
+  </React.StrictMode>
 , document.getElementById("root"));
 if (process.env.NODE_ENV === "development") {
   import("./eruda").then(({ default: eruda }) => {}); //runtime download

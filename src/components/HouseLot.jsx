@@ -33,7 +33,7 @@ function HouseLot({house, isMy, isRent}) {
 			...user,
 			balance: newBalance,
 			house: myHouse,
-            energy: myEnergy,
+            maxEnergy: myEnergy,
 		}
 		dispatch(setUser(fields))
 		save(fields)
@@ -47,7 +47,7 @@ function HouseLot({house, isMy, isRent}) {
 			...user,
 			balance: newBalance,
 			house: myHouse.map(item => item._id),
-            energy: myEnergy,
+            maxEnergy: myEnergy,
 		}
 		dispatch(setUser(fields))
 		save(fields)
@@ -60,7 +60,7 @@ function HouseLot({house, isMy, isRent}) {
 		const fields = {
 			...user,
 			house: myHouse.map(item => item._id),
-            energy: myEnergy,
+            maxEnergy: myEnergy,
             rent: rentHouse,
 		}
 		dispatch(setUser(fields))
@@ -70,11 +70,11 @@ function HouseLot({house, isMy, isRent}) {
     const derentHouse = () => {
         const myHouses = [...user.house, house._id]
         const myEnergy = user.maxEnergy + house.energy
-        const rentHouse = rentHouses.filter((house) => house._id !== house._id)
+        const rentHouse = rentHouses.filter((h) => h._id !== house._id)
 		const fields = {
 			...user,
 			house: myHouses,
-            energy: myEnergy,
+            maxEnergy: myEnergy,
             rent: rentHouse.map(item => item._id),
 		}
 		dispatch(setUser(fields))
@@ -100,7 +100,7 @@ function HouseLot({house, isMy, isRent}) {
             </Typography>}
             {isMy ? <Typography gutterBottom variant="body2">Цена: {house.price} K</Typography> : <Typography gutterBottom variant="subtitle2">{house.name}</Typography>}
             <Typography variant="caption" color="text.secondary">
-                Плюс к энергии: <b>{house.energy}Ккал</b><br/>
+                Энергия: <b>+{house.energy}</b><br/>
                 Затраты в месяц: <b>{house.expenses} К</b><br/>
                 Сдача в аренду: <b>{house.rentPrice} К/мес</b>
             </Typography>

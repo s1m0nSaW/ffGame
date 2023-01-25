@@ -1,4 +1,4 @@
-import { Backdrop, Button, CircularProgress, Typography } from '@mui/material'
+import { Backdrop, Button, ButtonGroup, CircularProgress, Container, CssBaseline, Stack, Toolbar, Typography } from '@mui/material'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -8,13 +8,16 @@ import { setUser } from '../redux/slices/userSlice.js'
 function Intro({fetchedUser}) {
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const [firstTime, setFirstTime] = React.useState(true)
 
     const getPlayer = async () => {
         await axios.get(`/auth/me/${fetchedUser.id}`).then(({data}) => {
           dispatch(setUser(data))
-          navigate('/main/main')
+          setFirstTime(false)
+          //navigate('/main/main')
         }).catch(() =>{
-          navigate('/register')
+          console.log('user not found')
+          //navigate('/register')
         })
     }
      
@@ -24,12 +27,24 @@ function Intro({fetchedUser}) {
     
     
     return (
-      <Backdrop
-        sx={{ color: '#fff' }}
-        open={true}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
+      <Container disableGutters>
+        <CssBaseline/>
+        <Toolbar/>
+        <Toolbar/>
+        <Toolbar/>
+        <Toolbar/>
+        <Stack
+          direction="column"
+          justifyContent="center"
+          alignItems="center"
+          spacing={1}
+        >
+          <Button disabled={firstTime} onClick={()=>navigate('/main/main')}>Играть</Button>
+          <Button disabled={firstTime} onClick={()=>navigate('/register')}>Начать заново</Button>
+          <Button onClick={()=>navigate('/training')}>Обучение</Button>
+          <Button onClick={()=>navigate('/settings')}>Настройки</Button>
+        </Stack>
+      </Container>
     )
 }
 

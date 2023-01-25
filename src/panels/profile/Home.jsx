@@ -1,13 +1,8 @@
 import React from 'react'
 import { useSelector } from 'react-redux';
 import { Grid, Toolbar, Typography, Stack, Avatar } from '@mui/material';
-import HouseLot from '../components/HouseLot';
-import CarLot from '../components/CarLot';
-
-import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
-import EqualizerOutlinedIcon from '@mui/icons-material/EqualizerOutlined';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import EmojiTransportationIcon from '@mui/icons-material/EmojiTransportation';
+import HouseLot from '../../components/HouseLot';
+import CarLot from '../../components/CarLot';
 
 function Home() {
     const user = useSelector((state) => state.user.user)

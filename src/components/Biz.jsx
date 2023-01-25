@@ -4,6 +4,7 @@ import { green, pink } from '@mui/material/colors';
 
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom'
 import { setUser } from '../redux/slices/userSlice';
 import axios from '../axios.js'
 
@@ -45,6 +46,7 @@ function Biz({ biz }) {
     const value = timeLeft * 10
     const [ isCounting, setIsCounting ] = React.useState(true)
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const user = useSelector((state) => state.user.user)
 	const bizs = useSelector((state) => state.bizs.bizs)
     const myBizs = bizs.filter(({_id}) => user.bizs.includes(_id))
@@ -56,7 +58,7 @@ function Biz({ biz }) {
             setColor("secondary")
             setBizIcon(Service)
         } else
-        if(biz.bizType == "Общепит") {
+        if(biz.bizType == "Общепит") { 
             setColor("warning")
             setBizIcon(Restaurant)
         } else
@@ -81,16 +83,21 @@ function Biz({ biz }) {
 
     React.useEffect(() => {
         const interval = setInterval(() => {
+            
             isCounting && setTimeLeft((timeLeft) => (timeLeft >= 10 ? 10 : timeLeft +1 ))
 			
             if (timeLeft == 10) {
-				result()
+                if(user.energy <= 0){
+                    pause()
+                } else {
+                    result()
+                }
 			}
         },500)
         return () => {
             clearInterval(interval)
         }
-    },[timeLeft, isCounting])
+    },[timeLeft, isCounting, user])
 
     const handleStart = (price,requiredEnergy) => {
         if (timeLeft == 10)setTimeLeft(0)
@@ -103,6 +110,7 @@ function Biz({ biz }) {
             energy: newEnergy,
 		}
 		dispatch(setUser(fields))
+        save(fields)
     }
 
     const sellBiz = ( id, price) => {
@@ -117,6 +125,16 @@ function Biz({ biz }) {
 		save(fields)
 	}
 
+    const pause = () => {
+        const fields = {
+            ...user,
+            onGame: false,
+        }
+        dispatch(setUser(fields))
+		save(fields)
+        navigate('/pause')
+    }
+
     const save = async (data) => {
 		await axios.patch(`/auth/${user._id}`, data)}
 
@@ -126,8 +144,8 @@ function Biz({ biz }) {
             secondaryAction={<Stack alignItems="flex-end">
                 <Typography variant="h6" sx={{ color: profitColor }}>{Math.trunc(profit)} K</Typography>
                 <IconButton 
-                    onClick={()=>handleStart(profit,biz.requiredEnergy)} 
-                    color={color} 
+                    onClick={()=>handleStart(Math.trunc(profit),biz.requiredEnergy)} 
+                    color="primary" 
                     disabled={isCounting} 
                     variant="contained" 
                     size="small"
