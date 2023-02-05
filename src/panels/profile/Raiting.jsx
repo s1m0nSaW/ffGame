@@ -1,4 +1,4 @@
-import { Toolbar, Box, Tab, Tabs, Typography } from '@mui/material'
+import { Toolbar, Box, Typography } from '@mui/material'
 import React from 'react'
 
 function Raiting() {

@@ -1,11 +1,14 @@
-import { IconButton, Toolbar, List, Container, Divider, Stack, Typography, ListItem, ListItemAvatar, Avatar, ListItemText, LinearProgress, Modal, Box, Button } from '@mui/material'
+import { IconButton, Toolbar, List, Container, Stack, Typography, ListItem, ListItemAvatar, Avatar, ListItemText, LinearProgress, Modal, Box, Button, Paper } from '@mui/material'
 import { grey } from '@mui/material/colors';
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '@happysanta/router'
 import { setUser } from '../redux/slices/userSlice';
 import axios from '../axios.js'
+import { PAGE_PAUSE, PAGE_REGISTER, PAGE_MAIN } from '../routers';
 
+import { Header } from '../components/Header.jsx';
+import BottomNav from '../components/BottomNav';
 import Biz from '../components/Biz.jsx';
 import Work from '../components/Work.jsx';
 import Rent from '../components/Rent.jsx';
@@ -13,13 +16,13 @@ import SavingsIcon from '@mui/icons-material/Savings';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import BusinessIcon from '@mui/icons-material/Business';
+import { Panel } from '@vkontakte/vkui';
 
-function Main() {
+function Main({fetchedUser}) {
     const dispatch = useDispatch()
-    const navigate = useNavigate()
+    const router = useRouter()
     
     const user = useSelector((state) => state.user.user)
-    if(user.onGame == false) navigate('/pause')
     const bizs = useSelector((state) => state.bizs.bizs)
     const houses = useSelector((state) => state.houses.houses)
     const cars = useSelector((state) => state.cars.cars)
@@ -31,8 +34,11 @@ function Main() {
     const sumRent = myRents.map(item => item.rentPrice).reduce((prev, curr) => prev + curr, 0)
 
     const sumHouseExp = myHouses.map(item => item.expenses).reduce((prev, curr) => prev + curr, 0)
+    const sumHouses = myHouses.map(item => item.price).reduce((prev, curr) => prev + curr, 0)
 	const sumCarExp = myCars.map(item => item.expenses).reduce((prev, curr) => prev + curr, 0)
+    const sumCars = myCars.map(item => item.price).reduce((prev, curr) => prev + curr, 0)
     const sumRentExp = myRents.map(item => item.expenses).reduce((prev, curr) => prev + curr, 0)
+    const sumRents = myRents.map(item => item.price).reduce((prev, curr) => prev + curr, 0)
     const sumCreditsDebt = user.credits.map(item => item.debt).reduce((prev, curr) => prev + curr, 0)
     const sumCreditsPayments = user.credits.map(item => item.payment).reduce((prev, curr) => prev + curr, 0)
 
@@ -65,20 +71,29 @@ function Main() {
         }
     }
 
-    const victory = () => {
-        const newRecord = {
-            id: +new Date,
-            prof: user.prof,
-            age: Math.trunc(user.age/12),
-            cashflow: Math.round(((user.deposit.amount * 0.13)/12) + sumRent),
+    const victory = ( age, prof, summ ) => {
+        if(age < user.record.age){
+            const newRecord = {
+                prof: prof,
+                age: age,
+                cashflow: summ,
+                bizCount: myBizs.length,
+                deposit: user.deposit.amount,
+                rentCount: myRents.length,
+                houseSumm: sumHouses + sumRents,
+                carSum: sumCars,
+            }
+            const fields = {
+                ...user,
+                record: newRecord,
+            }
+            dispatch(setUser(fields))
+            save(fields)
+            router.pushPage(PAGE_REGISTER)
+        } else {
+            router.pushPage(PAGE_REGISTER)
         }
-        const fields = {
-            ...user,
-            records: [...user.records,newRecord],
-        }
-        dispatch(setUser(fields))
-        save(fields)
-        navigate('/register')
+        
     }
 
     const accruePayments = () => {
@@ -137,6 +152,8 @@ function Main() {
 		await axios.patch(`/auth/${user._id}`, data)
     }
 
+    React.useEffect(()=>{if(user.onGame == false) router.pushPage(PAGE_PAUSE)},[user])
+
     React.useEffect(() => {
         const ageInterval = setInterval(() => {
             bankrotListener()
@@ -180,7 +197,7 @@ function Main() {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: 250,
-        bgcolor: 'background.paper',
+        bgcolor: 'white',
         borderRadius: '10px',
         boxShadow: 24,
         p: 4,
@@ -191,9 +208,9 @@ function Main() {
         <Stack direction="column"
             justifyContent="space-evenly"
             alignItems="center">
-            <BusinessCenterIcon sx={{ fontSize: 40, color: grey[500], marginTop: '15px' }} />
-            <Typography  sx={{ color: grey[700] }} variant="subtitle1">У Вас еще нет бизнеса</Typography>
-            <Typography  sx={{ color: grey[700] }} variant="caption">Купить бизнес можно во вкладке "Сделки"</Typography>
+            <BusinessCenterIcon color="disabled" sx={{ fontSize: 40, marginTop: '15px' }} />
+            <Typography variant="subtitle1">У Вас еще нет бизнеса</Typography>
+            <Typography variant="caption">Купить бизнес можно во вкладке "Сделки"</Typography>
         </Stack>)
     }
 
@@ -202,9 +219,9 @@ function Main() {
         <Stack direction="column"
             justifyContent="space-evenly"
             alignItems="center">
-            <SavingsIcon sx={{ fontSize: 40, color: grey[500], marginTop: '15px' }} />
-            <Typography  sx={{ color: grey[700] }} variant="subtitle1">У Вас еще нет вклада</Typography>
-            <Typography  sx={{ color: grey[700] }} variant="caption">Открыть вклад можно во вкладке "Банк"</Typography>
+            <SavingsIcon color="disabled" sx={{ fontSize: 40, marginTop: '15px' }} />
+            <Typography variant="subtitle1">У Вас еще нет вклада</Typography>
+            <Typography variant="caption">Открыть вклад можно во вкладке "Банк"</Typography>
         </Stack>)
     }
 
@@ -213,18 +230,20 @@ function Main() {
         <Stack direction="column"
             justifyContent="space-evenly"
             alignItems="center">
-            <BusinessIcon sx={{ fontSize: 40, color: grey[500], marginTop: '15px' }} />
-            <Typography  sx={{ color: grey[700] }} variant="subtitle1">У Вас еще нет недвижимости в аренде</Typography>
-            <Typography  sx={{ color: grey[700] }} variant="caption">Сдать недвижимость в аренду можно во вкладке "Профиль"</Typography>
+            <BusinessIcon color="disabled" sx={{ fontSize: 40, marginTop: '15px' }} />
+            <Typography variant="subtitle1">У Вас еще нет недвижимости в аренде</Typography>
+            <Typography variant="caption">Сдать недвижимость в аренду можно во вкладке "Профиль"</Typography>
         </Stack>)
     }
 
     return (
-        <Container disableGutters>
+        <Paper sx={{ width: '100vw', height: '100%', minHeight: '100vh', borderRadius:0 }}>
+            <Container>
+            <Header fetchedUser={fetchedUser}/>
             {user.onGame ? 
             <>
             {user.salary != 0 && <>
-            <Stack direction="row"><Typography variant="subtitle1">Работа</Typography></Stack>
+            <Stack direction="row"><Typography sx={{ marginTop: '10px'}} variant="subtitle1">Работа</Typography></Stack>
             <Work/></>}
             <List dense>
             {myBizs.length >= 1 ? <Typography variant="subtitle1">Бизнесы</Typography>:<BizPlaceHolder/>}
@@ -249,8 +268,8 @@ function Main() {
                     ><PaymentsIcon/>
                     </IconButton></Stack>}>
                     <ListItemAvatar>
-                    <Avatar sx={{ bgcolor: "white" }}>
-                        <SavingsIcon color="action"/>
+                    <Avatar>
+                        <SavingsIcon/>
                     </Avatar>
                     </ListItemAvatar>
                     <ListItemText
@@ -297,7 +316,7 @@ function Main() {
                 </Typography><br/>
                 <Typography variant='caption'>Вы достигли финансовой свободы в возрасте <b>{Math.trunc(user.age/12)}</b>, с начальной профессией <b>{user.prof}</b>, 
                 с суммой пассивного дохода <b>{Math.round(((user.deposit.amount * 0.13)/12) + sumRent)}</b></Typography><br/><br/>
-                <Button onClick={()=>victory()}>Начать заново</Button>
+                <Button onClick={()=>victory(Math.trunc(user.age/12),user.prof,Math.round(((user.deposit.amount * 0.13)/12) + sumRent))}>Начать заново</Button>
                 </Box>
             </Modal>
             <Modal
@@ -308,7 +327,7 @@ function Main() {
                     Игра закончена
                 </Typography><br/>
                 <Typography variant='caption'>Вы банкрот 😥</Typography><br/><br/>
-                <Button onClick={()=>navigate('/register')}>Начать заново</Button>
+                <Button onClick={()=>router.pushPage(PAGE_REGISTER)}>Начать заново</Button>
                 </Box>
             </Modal>
             <Modal
@@ -319,10 +338,12 @@ function Main() {
                     Игра закончена
                 </Typography><br/>
                 <Typography variant='caption'>Вы достигли предельного возраста 😥</Typography><br/><br/>
-                <Button onClick={()=>navigate('/register')}>Начать заново</Button>
+                <Button onClick={()=>router.pushPage(PAGE_REGISTER)}>Начать заново</Button>
                 </Box>
             </Modal>
-        </Container >
+            <BottomNav value={PAGE_MAIN}/>
+            </Container>
+        </Paper>
     
     )
 }

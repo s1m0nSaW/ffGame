@@ -18,11 +18,6 @@ export const houseSlice = createSlice({
             state.houses = action.payload
         },
     },
-    extraReducers: {
-        [getHouses.fulfilled] : () => console.log('houses получены'),
-        [getHouses.pending] : () => console.log('запрос houses'),
-        [getHouses.rejected] : () => console.log('ошибка houses'),
-    }
 })
 
 export const { setHouses } = houseSlice.actions

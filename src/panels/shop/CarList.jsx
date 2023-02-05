@@ -26,9 +26,9 @@ function CarList() {
         justifyContent="space-evenly"
         alignItems="center">
         <Toolbar/>
-        <CarCrashIcon sx={{ fontSize: 40, color: grey[500] }} />
-        <Typography  sx={{ color: grey[700] }} variant="subtitle1">Нет доступного транспорта</Typography>
-        <Typography  sx={{ color: grey[700] }} variant="caption">Вы скупили всё</Typography>
+        <CarCrashIcon color="disabled" sx={{ fontSize: 40 }} />
+        <Typography variant="subtitle1">Нет доступного транспорта</Typography>
+        <Typography variant="caption">Вы скупили всё</Typography>
         </Stack> }
         </>
     )

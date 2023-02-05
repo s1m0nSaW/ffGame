@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import bridge from '@vkontakte/vk-bridge';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, withRouter } from '@happysanta/router';
 
-import { Route, Routes } from 'react-router-dom';
-import Layout from './components/Layout';
+import { VIEW_MAIN, PANEL_INTRO, PANEL_REGISTER, PANEL_TRAINING, PANEL_SETTINGS, PANEL_PAUSE, PANEL_MAIN, PANEL_PROPERTY, PANEL_BANK, PANEL_PROFILE } from './routers';
+
 import Main from './panels/Main';
 import Property from './panels/Property';
 import Bank from './panels/Bank';
@@ -13,20 +14,30 @@ import Training from './panels/Training';
 import Settings from './panels/Settings';
 import Pause from './panels/Pause';
 import Profile from './panels/Profile';
-import AppLayout from './components/AppLayout';
 
 import { getHouses } from './redux/slices/housesSlice';
 import { getCars } from './redux/slices/carsSlice';
 import { getBizs } from './redux/slices/bizsSlice';
-import { getUsers, getProfs } from './redux/slices/userSlice.js';
-import { AdaptivityProvider, AppRoot, ConfigProvider, SplitCol, SplitLayout } from '@vkontakte/vkui';
+import { getUsers, getProfs, setDebts, setGreetings } from './redux/slices/userSlice.js';
+import { AppRoot, View } from '@vkontakte/vkui';
 import '@vkontakte/vkui/dist/vkui.css';
+import { ThemeProvider, createTheme } from '@mui/material';
 
 const App = () => {
-	const [scheme, setScheme] = useState('bright_light')
+	const [scheme, setScheme] = useState('bright_light') //space_gray  bright_light
 	const [fetchedUser, setUser] = useState(null)
+	const user = useSelector((state) => state.user.user)
+	const theme = useSelector((state) => state.user.theme)
 
 	const dispatch = useDispatch()
+	const location = useLocation()
+
+	useEffect(() => {
+		if (Object.keys(user).length != 0) {
+			if (user.debts > 0) { dispatch(setDebts(true)) } else { dispatch(setDebts(false)) }
+			if (user.greetingIn.length > 0) { dispatch(setGreetings(true)) } else { dispatch(setGreetings(false)) }
+		}
+	}, [user])
 
 	useEffect(() => {
 		dispatch(getHouses())
@@ -35,7 +46,7 @@ const App = () => {
 		dispatch(getUsers())
 		dispatch(getProfs())
 
-		bridge.subscribe(({ detail: { type, data }}) => {
+		bridge.subscribe(({ detail: { type, data } }) => {
 			if (type === 'VKWebAppUpdateConfig') {
 				setScheme(data.scheme)
 			}
@@ -46,30 +57,95 @@ const App = () => {
 			setUser(user);
 		}
 		fetchData();
+
+
 	}, []);
 
+	const themeSettings = () => {
+		if(theme == 'dark'){
+			return {
+				palette: {
+					mode: "dark"
+				},
+				typography: {
+					fontFamily: [
+						'Jura',
+						'sans-serif'
+					].join(','),
+				},
+			}
+		} else
+		if(theme == 'light'){
+			return{
+				palette: {
+					mode: "light",
+					background: {
+						default: '#FFFFFF',
+						paper: '#F2F2F2'
+					}
+				},
+				typography: {
+					fontFamily: [
+						'Jura',
+						'sans-serif'
+					].join(','),
+				},
+			}
+		} else
+		if(theme == 'auto'){
+			if(scheme == 'bright_light'){
+				return{
+					palette: {
+						mode: "light",
+						background: {
+							default: '#FFFFFF',
+							paper: '#F2F2F2'
+						}
+					},
+					typography: {
+						fontFamily: [
+							'Jura',
+							'sans-serif'
+						].join(','),
+					},
+				}
+			} else {
+				return {
+					palette: {
+						mode: "dark"
+					},
+					typography: {
+						fontFamily: [
+							'Jura',
+							'sans-serif'
+						].join(','),
+					},
+				}
+			}
+		}
+	}
+
+	const themeMode = createTheme(themeSettings())
 	return (
-		<ConfigProvider scheme={scheme}  isWebView={true}>
-			<AdaptivityProvider>
-				<AppRoot>
-					<Routes>
-						<Route path='/' element={<AppLayout/>}/>
-						<Route index element={<Intro fetchedUser={fetchedUser} />}/>
-						<Route path='register' element={<Register fetchedUser={fetchedUser} />}/>
-						<Route path='training' element={<Training fetchedUser={fetchedUser} />}/>
-						<Route path='settings' element={<Settings fetchedUser={fetchedUser} />}/>
-						<Route path='pause' element={<Pause fetchedUser={fetchedUser} />}/>
-						<Route path='main/' element={<Layout fetchedUser={fetchedUser} />}>
-							<Route path='main' element={<Main/>}/>
-							<Route path='property' element={<Property/>}/>
-							<Route path='bank' element={<Bank/>}/>
-							<Route path='profile' element={<Profile/>}/>
-						</Route>
-					</Routes>
-				</AppRoot>
-			</AdaptivityProvider>
-		</ConfigProvider>
+		<AppRoot>
+			<ThemeProvider theme={themeMode}>
+				<View
+					id={VIEW_MAIN}
+					history={location.hasOverlay() ? [] : location.getViewHistory(VIEW_MAIN)}
+					activePanel={location.getViewActivePanel(VIEW_MAIN)}>
+					<Intro id={PANEL_INTRO} fetchedUser={fetchedUser} />
+					<Register id={PANEL_REGISTER} fetchedUser={fetchedUser} />
+					<Training id={PANEL_TRAINING} />
+					<Settings id={PANEL_SETTINGS} fetchedUser={fetchedUser} />
+					<Pause id={PANEL_PAUSE} />
+					<Main id={PANEL_MAIN} fetchedUser={fetchedUser} />
+					<Property id={PANEL_PROPERTY} fetchedUser={fetchedUser} />
+					<Bank id={PANEL_BANK} fetchedUser={fetchedUser} />
+					<Profile id={PANEL_PROFILE} fetchedUser={fetchedUser} />
+				</View>
+			</ThemeProvider>
+		</AppRoot>
 	);
 }
 
-export default App;
+export default withRouter(App);

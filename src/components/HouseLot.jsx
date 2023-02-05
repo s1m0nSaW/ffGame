@@ -41,16 +41,29 @@ function HouseLot({house, isMy, isRent}) {
 
     const sellHouse = () => {
 		const newBalance = user.balance + house.price
-		const myHouse = myHouses.filter((house) => house._id !== isMy)
-        const myEnergy = user.maxEnergy - house.energy
-		const fields = {
-			...user,
-			balance: newBalance,
-			house: myHouse.map(item => item._id),
-            maxEnergy: myEnergy,
-		}
-		dispatch(setUser(fields))
-		save(fields)
+        if(!isRent){
+            const myHouse = myHouses.filter((house) => house._id !== isMy)
+            const myEnergy = user.maxEnergy - house.energy
+            const fields = {
+                ...user,
+                balance: newBalance,
+                house: myHouse.map(item => item._id),
+                maxEnergy: myEnergy,
+            }
+            dispatch(setUser(fields))
+            save(fields)
+        } else {
+            const myHouse = rentHouses.filter((house) => house._id !== isMy)
+            const myEnergy = user.maxEnergy - house.energy
+            const fields = {
+                ...user,
+                balance: newBalance,
+                rent: myHouse.map(item => item._id),
+                maxEnergy: myEnergy,
+            }
+            dispatch(setUser(fields))
+            save(fields)
+        }
 	}
 
     const rentHouse = () => {
@@ -87,7 +100,7 @@ function HouseLot({house, isMy, isRent}) {
 
     return (
         <Grid item>
-        <Card>
+        <Card variant="outlined">
         <CardMedia
             component="img"
             height="140"
@@ -99,7 +112,7 @@ function HouseLot({house, isMy, isRent}) {
             Цена: {house.price} K
             </Typography>}
             {isMy ? <Typography gutterBottom variant="body2">Цена: {house.price} K</Typography> : <Typography gutterBottom variant="subtitle2">{house.name}</Typography>}
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption">
                 Энергия: <b>+{house.energy}</b><br/>
                 Затраты в месяц: <b>{house.expenses} К</b><br/>
                 Сдача в аренду: <b>{house.rentPrice} К/мес</b>

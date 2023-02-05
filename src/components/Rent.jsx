@@ -41,7 +41,7 @@ function Rent({house}) {
         <ListItem disablePadding
           secondaryAction={<Typography variant="h6">{house.rentPrice} K</Typography>}>
             <ListItemAvatar>
-            <Avatar sx={{ bgcolor: "white" }}>
+            <Avatar>
                 <BusinessIcon color="action"/>
             </Avatar>
             </ListItemAvatar>

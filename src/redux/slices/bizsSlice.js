@@ -18,11 +18,6 @@ export const bizSlice = createSlice({
             state.bizs = action.payload
         },
     },
-    extraReducers: {
-        [getBizs.fulfilled] : () => console.log('bizs получены'),
-        [getBizs.pending] : () => console.log('запрос bizs'),
-        [getBizs.rejected] : () => console.log('ошибка bizs'),
-    }
 })
 
 export const { setBizs } = bizSlice.actions

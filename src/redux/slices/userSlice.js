@@ -6,7 +6,9 @@ const initialState = {
     users: [],
     friends: [],
     profs: [],
-    status: '',
+    debts: false,
+    greetings: false,
+    theme: 'auto',
 };
 
 export const getUsers = createAsyncThunk('users/getUsers', async ( _, { rejectWithValue, dispatch }) => {
@@ -33,35 +35,21 @@ export const userSlice = createSlice({
         setFriends: ( state, action ) => {
             state.friends = action.payload
         },
-        setStatus: ( state, action ) => {
-            state.status = action.payload
-        },
         setProfs: ( state, action ) => {
             state.profs = action.payload
         },
-    },
-    extraReducers: {
-        [getUsers.fulfilled] : () => {
-            console.log('users получены')
+        setDebts: ( state, action ) => {
+            state.debts = action.payload
         },
-        [getUsers.pending] : () => {
-            console.log('запрос users')
+        setGreetings: ( state, action ) => {
+            state.greetings = action.payload
         },
-        [getUsers.rejected] : () => {
-            console.log('ошибка users')
-        },
-        [getProfs.fulfilled] : () => {
-            console.log('profs получены')
-        },
-        [getProfs.pending] : () => {
-            console.log('запрос profs')
-        },
-        [getProfs.rejected] : () => {
-            console.log('ошибка profs')
+        setTheme: ( state, action ) => {
+            state.theme = action.payload
         },
     },
 });
 
-export const { setUser, setUsers, setFriends, setStatus, setProfs } = userSlice.actions;
+export const { setUser, setUsers, setFriends, setDebts, setGreetings, setProfs, setTheme } = userSlice.actions;
 
 export default userSlice.reducer;

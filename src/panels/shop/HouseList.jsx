@@ -29,9 +29,9 @@ function HouseList() {
         justifyContent="space-evenly"
         alignItems="center">
         <Toolbar/>
-        <MapsHomeWorkIcon sx={{ fontSize: 40, color: grey[500] }} />
-        <Typography  sx={{ color: grey[700] }} variant="subtitle1">Нет доступной недвижимости</Typography>
-        <Typography  sx={{ color: grey[700] }} variant="caption">Вы скупили всё</Typography>
+        <MapsHomeWorkIcon color="disabled" sx={{ fontSize: 40 }} />
+        <Typography variant="subtitle1">Нет доступной недвижимости</Typography>
+        <Typography variant="caption">Вы скупили всё</Typography>
         </Stack>}</>
     )
 }

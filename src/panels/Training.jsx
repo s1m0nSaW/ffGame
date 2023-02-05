@@ -1,24 +1,25 @@
-import { Toolbar, Box, Tab, Tabs, Typography, Button, Stack, Container } from '@mui/material'
+import { Toolbar, Typography, Button, Stack, Paper } from '@mui/material'
+import { Panel } from '@vkontakte/vkui'
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '@happysanta/router'
+import { PAGE_MAIN, PAGE_REGISTER } from '../routers'
 
-function Training({fetchedUser}) {
-    const navigate = useNavigate()
+function Training() {
+    const router = useRouter()
     return (
-        <Container disableGutters>
-            <Toolbar/>
-            <Toolbar/>
-            <Toolbar/>
+        <Paper sx={{ width: '100vw', height: '100%', minHeight: '100vh', borderRadius:0 }}>
             <Stack
+            sx={{ width: '100vw', height: '100vh' }}
             direction={'column'}
             alignItems='center'
             justifyContent='center'
             spacing={1}>
             <Typography>Здесь будет материал для обучения</Typography>
-            <Button onClick={()=>navigate('/register')}>Играть</Button>
+            <Button onClick={()=>router.pushPage(PAGE_MAIN)}>Играть</Button>
+            <Button onClick={()=>router.pushPage(PAGE_REGISTER)}>Начать заново</Button>
             <Toolbar/>
             </Stack>
-        </Container>
+        </Paper>
     )
 }
 

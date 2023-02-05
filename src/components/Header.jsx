@@ -1,25 +1,26 @@
 
 import { AppBar, Avatar, Container, ListItemText, Skeleton, Toolbar, Typography, Stack, Chip, Snackbar, Button, IconButton } from '@mui/material'
-import { purple, lime, teal, grey, blue, lightGreen, green } from '@mui/material/colors';
 import CloseIcon from '@mui/icons-material/Close';
 
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../redux/slices/userSlice';
 import axios from '../axios.js';
+import { PAGE_INTRO } from '../routers';
+import { useRouter } from '@happysanta/router';
 
 import BoltIcon from '@mui/icons-material/Bolt';
 import QueryBuilderOutlinedIcon from '@mui/icons-material/QueryBuilderOutlined';
 import BatteryChargingFullOutlinedIcon from '@mui/icons-material/BatteryChargingFullOutlined';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 export const Header = ({fetchedUser}) => {
+  const router = useRouter()
   const dispatch = useDispatch()
   const [open, setOpen] = React.useState(false);
-  const [energyColor, setEnergyColor] = React.useState(blue[500])
+  const [energyColor, setEnergyColor] = React.useState("default")
   const [timeLeft, setTimeLeft] = React.useState(0)
   const [enerTime, setEnerTime] = React.useState(0)
   const user = useSelector((state) => state.user.user)
@@ -30,9 +31,9 @@ export const Header = ({fetchedUser}) => {
   React.useEffect( () => {
     if(user.energizer > 0){
       if(user.energy < user.maxEnergy){
-        setEnergyColor(blue[400])
-      } else setEnergyColor(grey[200])
-    } else setEnergyColor(grey[200])
+        setEnergyColor("primary")
+      } else setEnergyColor("default")
+    } else setEnergyColor("default")
 
     const interval = setInterval(() => {
       !user.freeEnergizer && setTimeLeft((timeLeft) => (timeLeft >= 100 ? 100 : timeLeft +1 ))
@@ -65,7 +66,6 @@ export const Header = ({fetchedUser}) => {
           ...user,
           energizer: newEnergizer,
           energy: newEnergy,
-          
         }
         dispatch(setUser(fields))
         save(fields)
@@ -75,12 +75,13 @@ export const Header = ({fetchedUser}) => {
 
   const handleFreeEnergy = () => {
     const date = +new Date
-    const newEnergizer = user.energizer + 10
+    const newEnergizer = user.energizer + user.freeEnergizerCount
 		const fields = {
 			...user,
 			energizer: newEnergizer,
       freeEnergizer: date + 86400000,
       freeEnergizerOn: false,
+      disabled:[], 
 		}
 		dispatch(setUser(fields))
 		save(fields)
@@ -153,13 +154,13 @@ export const Header = ({fetchedUser}) => {
 
 
   return (
-      <AppBar component="nav" color="inherit" sx={{padding:'10px', borderRadius:'10px'}} position='sticky'>
+      <AppBar component="nav" color="inherit" sx={{padding:'10px', borderRadius:'10px', top: 10, marginBottom: '10px'}} position='sticky'>
         {fetchedUser ?
         <Toolbar disableGutters>
           <Stack direction="column" sx={{ width: '100%' }} >
           <Stack direction="row" spacing={1}>
           <Stack>
-            <Avatar src={fetchedUser.photo_200}/>
+            <Avatar onClick={()=>{router.pushPage(PAGE_INTRO)}} src={fetchedUser.photo_200}/>
           </Stack>
           <Stack direction="column">
             <Typography variant='caption' >{fetchedUser.first_name} {fetchedUser.last_name}</Typography>
@@ -172,15 +173,37 @@ export const Header = ({fetchedUser}) => {
             justifyContent="flex-start"
             alignItems="center"
             spacing={1}>
-              <Chip label={`${user.energy}/${user.maxEnergy}`} sx={{ bgcolor: energyColor }} deleteIcon={<AddCircleIcon/>} onDelete={handlePlusEnergy}  icon={<BoltIcon />} size="small" />
-              <Chip label={user.energizer} icon={<BatteryChargingFullOutlinedIcon />} size="small" sx={{ bgcolor: teal[200] }}/>
-              <Chip label={`${user.time - (bizTime + user.workTime)}/${user.time}`} sx={{ bgcolor: purple[200] }} icon={<QueryBuilderOutlinedIcon />} size="small" />
-              <Chip label={`${Math.trunc(user.age/12)}/60`} sx={{ bgcolor: lime[300] }} icon={<HourglassEmptyIcon />} size="small" />
+              <Chip 
+                label={<Typography variant='caption'><b>{user.energy}/{user.maxEnergy}</b></Typography>} 
+                deleteIcon={<AddCircleIcon sx={{ color: 'black' }}/>} 
+                onDelete={handlePlusEnergy} 
+                icon={<BoltIcon/>} 
+                size="small"
+                color={energyColor}
+              />
+              <Chip 
+                label={<Typography variant='caption'><b>{user.energizer}</b></Typography>} 
+                icon={<BatteryChargingFullOutlinedIcon sx={{ color: 'black' }}/>} 
+                size="small"
+                color="secondary" 
+              />
+              <Chip 
+                label={<Typography variant='caption'><b>{user.time - (bizTime + user.workTime)}/{user.time}</b></Typography>} 
+                icon={<QueryBuilderOutlinedIcon sx={{ color: 'black' }}/>} 
+                size="small" 
+                color="success" 
+              />
+              <Chip 
+                label={<Typography variant='caption'><b>{Math.trunc(user.age/12)}/60</b></Typography>} 
+                icon={<HourglassEmptyIcon/>} 
+                size="small" 
+                color="warning" 
+              />
             </Stack>
             <Stack 
               direction="row"
               sx={{ marginTop: '15px'}}>
-                {user.freeEnergizerOn ? <Chip label={`+10 энергетиков`} onClick={()=>handleFreeEnergy()} color="primary" icon={<BatteryChargingFullOutlinedIcon />} size="small" />:
+                {user.freeEnergizerOn ? <Chip label={<b>Энергетики +{user.freeEnergizerCount}</b>} onClick={()=>handleFreeEnergy()} color="primary" icon={<BatteryChargingFullOutlinedIcon />} size="small" />:
                 <Chip label={`Бесплатные через ${parseMillisecondsIntoReadableTime(enerTime)}`} icon={<BatteryChargingFullOutlinedIcon />} size="small" />}
                 <InfoOutlinedIcon onClick={()=>setOpen(true)} color="primary" sx={{ marginLeft:'auto'}} />
               </Stack>

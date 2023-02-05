@@ -4,7 +4,6 @@ import { green, pink } from '@mui/material/colors';
 
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom'
 import { setUser } from '../redux/slices/userSlice';
 import axios from '../axios.js'
 
@@ -14,6 +13,7 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 
 function Biz({ biz }) {
+
     const [ color, setColor ] = React.useState("inherit")
     const Restaurant = () => {
         return(
@@ -46,10 +46,10 @@ function Biz({ biz }) {
     const value = timeLeft * 10
     const [ isCounting, setIsCounting ] = React.useState(true)
     const dispatch = useDispatch()
-    const navigate = useNavigate()
     const user = useSelector((state) => state.user.user)
 	const bizs = useSelector((state) => state.bizs.bizs)
     const myBizs = bizs.filter(({_id}) => user.bizs.includes(_id))
+    const bizTime = myBizs.map(item => item.requiredTime).reduce((prev, curr) => prev + curr, 0)
     
     const [ bizIcon, setBizIcon ] = React.useState(SkeletonIcon)
 
@@ -75,33 +75,15 @@ function Biz({ biz }) {
 	  }
 
     const result = () => {
+		setIsCounting(false)
 		const p = getRandomIntInclusive( -150, biz.maxProfit)
         if( p > 0 ) {setProfitColor(green[700])} else {setProfitColor(pink[500])}
-		setIsCounting(false)
 		setProfit(p)
 	}
 
-    React.useEffect(() => {
-        const interval = setInterval(() => {
-            
-            isCounting && setTimeLeft((timeLeft) => (timeLeft >= 10 ? 10 : timeLeft +1 ))
-			
-            if (timeLeft == 10) {
-                if(user.energy <= 0){
-                    pause()
-                } else {
-                    result()
-                }
-			}
-        },500)
-        return () => {
-            clearInterval(interval)
-        }
-    },[timeLeft, isCounting, user])
-
     const handleStart = (price,requiredEnergy) => {
-        if (timeLeft == 10)setTimeLeft(0)
         setIsCounting(true)
+        if (timeLeft == 10)setTimeLeft(0)
         const newBalance = user.balance + price
         const newEnergy = user.energy - requiredEnergy
         const fields = {
@@ -132,11 +114,32 @@ function Biz({ biz }) {
         }
         dispatch(setUser(fields))
 		save(fields)
-        navigate('/pause')
+        //router.pushPage(PAGE_PAUSE)
     }
 
     const save = async (data) => {
-		await axios.patch(`/auth/${user._id}`, data)}
+		await axios.patch(`/auth/${user._id}`, data)
+    }
+
+    React.useEffect(() => {
+        const interval = setInterval(() => {
+            
+            if(biz.requiredTime < (user.time - (bizTime + user.workTime))){
+                isCounting && setTimeLeft((timeLeft) => (timeLeft >= 10 ? 10 : timeLeft +1 ))
+            }
+			
+            if (timeLeft == 10) {
+                if(user.energy <= 0){
+                    pause()
+                } else {
+                    result()
+                }
+			}
+        },500)
+        return () => {
+            clearInterval(interval)
+        }
+    },[isCounting, timeLeft])
 
     return (
         <>
@@ -152,7 +155,7 @@ function Biz({ biz }) {
                 ><PaymentsIcon/></IconButton></Stack>}
         >
             <ListItemAvatar>
-                <Avatar sx={{ bgcolor: "white" }}>
+                <Avatar>
                 {bizIcon}
                 </Avatar>
             </ListItemAvatar>

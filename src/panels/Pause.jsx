@@ -1,14 +1,16 @@
-import { Button, Container, CssBaseline, Stack, Toolbar, Typography } from '@mui/material'
+import { Button, Paper, CssBaseline, Stack, Toolbar, Typography } from '@mui/material'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '@happysanta/router'
 import axios from '../axios.js'
 import { setUser } from '../redux/slices/userSlice.js'
-import PauseIcon from '@mui/icons-material/Pause';
+import PauseIcon from '@mui/icons-material/Pause'
+import { PAGE_MAIN } from '../routers.js'
+import { Panel } from '@vkontakte/vkui'
 
-function Pause({fetchedUser}) {
+function Pause() {
     const dispatch = useDispatch()
-    const navigate = useNavigate()
+    const router = useRouter()
     const user = useSelector((state) => state.user.user)
 
     const play = () => {
@@ -19,7 +21,7 @@ function Pause({fetchedUser}) {
         }
         dispatch(setUser(fields))
         save(fields)
-        navigate('/main/main')
+        router.pushPage(PAGE_MAIN)
     }
 
     const save = async (data) => {
@@ -27,24 +29,20 @@ function Pause({fetchedUser}) {
     }
 
     return (
-        <Container disableGutters>
-            <CssBaseline/>
-            <Toolbar/>
-            <Toolbar/>
-            <Toolbar/>
-            <Toolbar/>
+        <Paper sx={{ width: '100vw', height: '100%', minHeight: '100vh', borderRadius:0 }}>
             <Stack
+            sx={{ width: '100vw', height: '100vh' }}
             direction="column"
             justifyContent="center"
             alignItems="center"
             spacing={1}
             >
-                <PauseIcon sx={{ fontSize: 40 }} />
+                <PauseIcon sx={{ fontSize: 40}} />
                 <Typography variant='h6'>ПАУЗА</Typography>
                 <Typography variant='caption'>Необходима для восстановления энергии</Typography>
                 <Button onClick={()=>play()}>Играть</Button>
             </Stack>
-        </Container>
+        </Paper>
     )
 }
 

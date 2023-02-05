@@ -57,7 +57,7 @@ function Work() {
         <ListItem disablePadding
           secondaryAction={<Typography variant="h6">{user.salary} K</Typography>}>
             <ListItemAvatar onClick={()=>setOpen(true)}>
-            <Avatar sx={{ bgcolor: "white" }}>
+            <Avatar>
                 <EngineeringIcon color="action"/>
             </Avatar>
             </ListItemAvatar>

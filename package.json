@@ -16,6 +16,7 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@fontsource/roboto": "^4.5.8",
+    "@happysanta/router": "^0.3.1",
     "@mui/icons-material": "^5.10.15",
     "@mui/material": "^5.10.15",
     "@reduxjs/toolkit": "^1.9.0",
@@ -31,8 +32,7 @@
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-redux": "^8.0.5",
-    "react-router-dom": "^6.4.3"
+    "react-redux": "^8.0.5"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
@@ -57,5 +57,5 @@
       "last 1 safari version"
     ]
   },
-  "homepage":"."
+  "homepage": "."
 }

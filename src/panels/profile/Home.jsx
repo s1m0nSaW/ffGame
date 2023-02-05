@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux';
-import { Grid, Toolbar, Typography, Stack, Avatar } from '@mui/material';
+import { Grid, Toolbar, Typography } from '@mui/material';
 import HouseLot from '../../components/HouseLot';
 import CarLot from '../../components/CarLot';
 

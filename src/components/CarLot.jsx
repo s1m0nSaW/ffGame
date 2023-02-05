@@ -53,7 +53,7 @@ function CarLot({car,isMy}) {
 
     return (
         <Grid item>
-        <Card>
+        <Card variant="outlined">
         <CardMedia
             component="img"
             height="140"
@@ -64,7 +64,7 @@ function CarLot({car,isMy}) {
             Цена: {car.price} K
             </Typography>}
             {isMy ? <Typography gutterBottom variant="body2"> Цена: {car.price} K</Typography> : <Typography gutterBottom variant="subtitle2">{car.name}</Typography>}
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption">
                 Время: <b>+{car.time}ч</b><br/>
                 Энергия: <b>+{car.energy}</b><br/>
                 Затраты в месяц: <b>{car.expenses} К</b><br/>

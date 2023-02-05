@@ -18,11 +18,6 @@ export const carSlice = createSlice({
             state.cars = action.payload
         },
     },
-    extraReducers: {
-        [getCars.fulfilled] : () => console.log('cars получены'),
-        [getCars.pending] : () => console.log('запрос cars'),
-        [getCars.rejected] : () => console.log('ошибка cars'),
-    }
 })
 
 export const { setCars } = carSlice.actions

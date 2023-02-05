@@ -1,23 +1,23 @@
-import { Backdrop, Button, ButtonGroup, CircularProgress, Container, CssBaseline, Stack, Toolbar, Typography } from '@mui/material'
+import { Button, Paper, Stack } from '@mui/material'
+import { Panel } from '@vkontakte/vkui'
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import axios from '../axios.js'
 import { setUser } from '../redux/slices/userSlice.js'
+import { useRouter } from '@happysanta/router'
+import { PAGE_MAIN, PAGE_REGISTER, PAGE_TRAINING, PAGE_SETTINGS } from '../routers.js'
 
 function Intro({fetchedUser}) {
     const dispatch = useDispatch()
-    const navigate = useNavigate()
+    const router = useRouter()
     const [firstTime, setFirstTime] = React.useState(true)
 
     const getPlayer = async () => {
         await axios.get(`/auth/me/${fetchedUser.id}`).then(({data}) => {
           dispatch(setUser(data))
           setFirstTime(false)
-          //navigate('/main/main')
         }).catch(() =>{
           console.log('user not found')
-          //navigate('/register')
         })
     }
      
@@ -27,24 +27,22 @@ function Intro({fetchedUser}) {
     
     
     return (
-      <Container disableGutters>
-        <CssBaseline/>
-        <Toolbar/>
-        <Toolbar/>
-        <Toolbar/>
-        <Toolbar/>
-        <Stack
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          spacing={1}
-        >
-          <Button disabled={firstTime} onClick={()=>navigate('/main/main')}>Играть</Button>
-          <Button disabled={firstTime} onClick={()=>navigate('/register')}>Начать заново</Button>
-          <Button onClick={()=>navigate('/training')}>Обучение</Button>
-          <Button onClick={()=>navigate('/settings')}>Настройки</Button>
-        </Stack>
-      </Container>
+      <Panel centered>
+        <Paper sx={{ width: '100vw', height: '100%', minHeight: '100vh', borderRadius:0 }}>
+          <Stack
+            sx={{ width: '100vw', height: '100vh' }}
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            spacing={1}
+          >
+            <Button disabled={firstTime} onClick={() => router.pushPage(PAGE_MAIN)}>Играть</Button>
+            <Button disabled={firstTime} onClick={() => router.pushPage(PAGE_REGISTER)}>Новая игра</Button>
+            <Button onClick={() => router.pushPage(PAGE_TRAINING)}>Обучение</Button>
+            <Button onClick={() => router.pushPage(PAGE_SETTINGS)}>Настройки</Button>
+          </Stack>
+        </Paper>
+      </Panel>
     )
 }
 
