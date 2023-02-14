@@ -1,8 +1,14 @@
-import { Toolbar, Typography, Button, Stack, Paper } from '@mui/material'
+import { Toolbar, Typography, Button, Stack, Paper, ImageList, ImageListItem } from '@mui/material'
 import { Panel } from '@vkontakte/vkui'
 import React from 'react'
 import { useRouter } from '@happysanta/router'
 import { PAGE_MAIN, PAGE_REGISTER } from '../routers'
+import bank from '../img/bank.png'
+import choose from '../img/choose.png'
+import deals from '../img/deals.png'
+import header from '../img/header.png'
+import main from '../img/main.png'
+import profile from '../img/profile.png'
 
 function Training() {
     const router = useRouter()
@@ -14,10 +20,29 @@ function Training() {
             alignItems='center'
             justifyContent='center'
             spacing={1}>
-            <Typography>Здесь будет материал для обучения</Typography>
-            <Button onClick={()=>router.pushPage(PAGE_MAIN)}>Играть</Button>
-            <Button onClick={()=>router.pushPage(PAGE_REGISTER)}>Начать заново</Button>
-            <Toolbar/>
+            <ImageList cols={1}>
+                <ImageListItem>
+                    <img src={choose}/>
+                </ImageListItem>
+                <ImageListItem>
+                    <img src={header}/>
+                </ImageListItem>
+                <ImageListItem>
+                    <img src={main}/>
+                </ImageListItem>
+                <ImageListItem>
+                    <img src={deals}/>
+                </ImageListItem>
+                <ImageListItem>
+                    <img src={bank}/>
+                </ImageListItem>
+                <ImageListItem>
+                    <img src={profile}/>
+                </ImageListItem>
+                <Toolbar/>
+                <Button onClick={()=>router.pushPage(PAGE_REGISTER)}>Начать</Button>
+                <Toolbar/>
+            </ImageList>
             </Stack>
         </Paper>
     )

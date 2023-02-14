@@ -62,12 +62,12 @@ function BizLot({biz}) {
         if(biz.bizPrice <= user.balance && biz.requiredTime <= (user.time - (bizTime + user.workTime))){ 
             setDisabled(false)
         }
+        
+        if(biz.bizPrice > user.balance || biz.requiredTime > (user.time - (bizTime + user.workTime))){ 
+            setDisabled(true)
+        }
 
-        if(biz.bizPrice > user.balance || biz.requiredTime > (user.time - (bizTime + user.workTime))) setDisabled(true)
-
-
-
-    },[biz, user.balance])
+    },[biz, user])
 
     const save = async (data) => {
 		await axios.patch(`/auth/${user._id}`, data)}
@@ -126,7 +126,6 @@ function BizLot({biz}) {
                 Необходимое время: <b>{biz.requiredTime}ч.</b><br/>
                 Максимальная прибыль: <b>{biz.maxProfit} K</b><br/>
                 Минимальная прибыль: <b>{biz.minProfit} K</b><br/>
-                Риск: <b>{biz.risk}</b><br/>
                 Сумма продажи: <b>{biz.sellPrice} K</b><br/>
             </DialogContentText>
             </DialogContent>

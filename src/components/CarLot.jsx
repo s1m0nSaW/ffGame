@@ -9,6 +9,7 @@ function CarLot({car,isMy}) {
     const user = useSelector((state) => state.user.user)
     const cars = useSelector((state) => state.cars.cars)
     const myCars = cars.filter(({_id}) => user.car.includes(_id))
+    const carsTime = myCars.map(item => item.time).reduce((prev, curr) => prev + curr, 0)
     const [ disabled, setDisabled ] = React.useState(true)
 
     React.useEffect(()=>{
@@ -20,31 +21,108 @@ function CarLot({car,isMy}) {
 		const myCars = [...user.car,car._id]
         const myEnergy = user.maxEnergy + car.energy
         const myTime = user.time + car.time
-		const fields = {
-			...user,
-			balance: newBalance,
-			car: myCars,
-            maxEnergy: myEnergy,
-            time: myTime,
-		}
-		dispatch(setUser(fields))
-		save(fields)
+        if(myTime > 14){
+            const fields = {
+                ...user,
+                balance: newBalance,
+                car: myCars,
+                maxEnergy: myEnergy,
+                time: 14,
+            }
+            dispatch(setUser(fields))
+            save(fields)
+        } else {
+            const fields = {
+                ...user,
+                balance: newBalance,
+                car: myCars,
+                maxEnergy: myEnergy,
+                time: myTime,
+            }
+            dispatch(setUser(fields))
+            save(fields)
+        }
     }
 
     const sellCar = () => {
 		const newBalance = user.balance + car.sellPrice
 		const myCars1 = myCars.filter((car) => car._id !== isMy)
         const myEnergy = user.maxEnergy - car.energy
-        const myTime = user.time - car.time
-		const fields = {
-			...user,
-			balance: newBalance,
-			car: myCars1.map(item => item._id),
-            maxEnergy: myEnergy,
-            time: myTime,
-		}
-		dispatch(setUser(fields))
-		save(fields)
+        if (carsTime == car.time) {
+            const myTime = user.time - car.time
+            if (myTime < 10) {
+                const fields = {
+                    ...user,
+                    balance: newBalance,
+                    car: myCars1.map(item => item._id),
+                    maxEnergy: myEnergy,
+                    time: 10,
+                }
+                dispatch(setUser(fields))
+                save(fields)
+                console.log('1')
+            } else if(myTime > 14){
+                const fields = {
+                    ...user,
+                    balance: newBalance,
+                    car: myCars1.map(item => item._id),
+                    maxEnergy: myEnergy,
+                    time: 14,
+                }
+                dispatch(setUser(fields))
+                save(fields)
+                console.log('2')
+            } else {
+                const fields = {
+                    ...user,
+                    balance: newBalance,
+                    car: myCars1.map(item => item._id),
+                    maxEnergy: myEnergy,
+                    time: myTime,
+                }
+                dispatch(setUser(fields))
+                save(fields)
+                console.log('3')
+            }
+        } else {
+            const lastCarTime = carsTime - car.time
+            const myTime = 10 + lastCarTime
+            if (myTime < 10) {
+                const fields = {
+                    ...user,
+                    balance: newBalance,
+                    car: myCars1.map(item => item._id),
+                    maxEnergy: myEnergy,
+                    time: 10,
+                }
+                dispatch(setUser(fields))
+                save(fields)
+                console.log('4')
+            }else if(myTime > 14){
+                const fields = {
+                    ...user,
+                    balance: newBalance,
+                    car: myCars1.map(item => item._id),
+                    maxEnergy: myEnergy,
+                    time: 14,
+                }
+                dispatch(setUser(fields))
+                save(fields)
+                console.log('5')
+            } else {
+                const fields = {
+                    ...user,
+                    balance: newBalance,
+                    car: myCars1.map(item => item._id),
+                    maxEnergy: myEnergy,
+                    time: myTime,
+                }
+                dispatch(setUser(fields))
+                save(fields)
+                console.log('6')
+            }
+        }
+        
 	}
 
     const save = async (data) => {
@@ -74,6 +152,7 @@ function CarLot({car,isMy}) {
         <CardActions>
             {isMy ? <Button size="small" onClick={()=>sellCar()}>Продать</Button>:
             <Button disabled={disabled} size="small" onClick={()=>buyCar()}>Купить</Button>}
+            <Button disabled={disabled} size="small" onClick={()=>console.log(carsTime)}>test</Button>
         </CardActions>
         </Card></Grid>
   )

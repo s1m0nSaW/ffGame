@@ -61,8 +61,8 @@ function Settings({fetchedUser}) {
 
   async function recommend() {
     bridge.send('VKWebAppShowWallPostBox', {
-      message: 'Hello!',
-      attachments: 'https://habr.com'
+      message: 'Попробуй себя в роли среднестатистического жителя России, который решил добиться финансовой свободы',
+      attachments: 'https://vk.com/app51483243'
       })
       .then((data) => { 
         if (data.post_id) {
@@ -121,7 +121,7 @@ function Settings({fetchedUser}) {
             <DarkModeIcon />
           </ToggleButton>
         </ToggleButtonGroup>
-        <Box sx={{ width: '80vw' }}>
+        {user && <Box sx={{ width: '80vw' }}>
           <Typography variant='caption'>Выполни задания и каждый день количество бесплатных энергетиков увеличится до 10 </Typography>
           <Stack sx={{ marginTop: "15px"}} direction="row" justifyContent="space-between" alignItems="center">
             <Typography variant='caption'>Подписаться на сообщество</Typography>
@@ -138,7 +138,7 @@ function Settings({fetchedUser}) {
           <Stack sx={{ marginTop: "15px"}} direction="row" justifyContent="center" alignItems="center">
             <Button onClick={()=>router.popPage()}>Назад</Button>
           </Stack>
-        </Box>
+        </Box>}
       </Stack>
     </Paper>
   )

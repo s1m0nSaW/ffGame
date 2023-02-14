@@ -61,7 +61,7 @@ export const Header = ({fetchedUser}) => {
     if(user.energizer > 0){
       if(user.energy < user.maxEnergy){
         const newEnergizer = user.energizer - 1
-        const newEnergy = user.energy + 5
+        const newEnergy = user.maxEnergy
         const fields = {
           ...user,
           energizer: newEnergizer,
@@ -102,7 +102,7 @@ export const Header = ({fetchedUser}) => {
       </Stack><br/>
       <Stack direction="row" spacing={1}>
         <BatteryChargingFullOutlinedIcon />
-        <Typography>Энергетик пополняет энергию на 5 пунктов. Каждый 24 часа предлагается 10 бесплатных энергетиков, 
+        <Typography>Энергетик пополняет энергию на 5 пунктов. Каждые 24 часа предлагается 10 бесплатных энергетиков, 
           их колисество можно увеличить до 50, выполнив некоторые условия в настройках.
         </Typography>
       </Stack><br/>
@@ -205,7 +205,6 @@ export const Header = ({fetchedUser}) => {
               sx={{ marginTop: '15px'}}>
                 {user.freeEnergizerOn ? <Chip label={<b>Энергетики +{user.freeEnergizerCount}</b>} onClick={()=>handleFreeEnergy()} color="primary" icon={<BatteryChargingFullOutlinedIcon />} size="small" />:
                 <Chip label={`Бесплатные через ${parseMillisecondsIntoReadableTime(enerTime)}`} icon={<BatteryChargingFullOutlinedIcon />} size="small" />}
-                <InfoOutlinedIcon onClick={()=>setOpen(true)} color="primary" sx={{ marginLeft:'auto'}} />
               </Stack>
             </Stack>
         </Toolbar> : 

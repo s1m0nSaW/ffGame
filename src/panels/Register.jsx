@@ -60,6 +60,11 @@ function Register({ fetchedUser }) {
         age: 60,
         prof: profession.profName,
         cashflow: 0,
+        bizCount: 0,
+        deposit: 0,
+        rentCount: 0,
+        houseSumm: 0,
+        carSum: 0,
       }
       const fields = {
         
@@ -69,7 +74,7 @@ function Register({ fetchedUser }) {
         workTime: 8,
         salary: profession.salary,
         userId: fetchedUser.id,
-        balance: 100,
+        balance: 500,
         debts: 0,
         age: profession.age,
         children: profession.childCount,
@@ -113,7 +118,7 @@ function Register({ fetchedUser }) {
         workTime: 8,
         salary: profession.salary,
         userId: user.userId,
-        balance: 100,
+        balance: 500,
         debts: 0,
         age: profession.age,
         children: profession.childCount,

@@ -108,9 +108,11 @@ function Biz({ biz }) {
 	}
 
     const pause = () => {
+        const date = +new Date
         const fields = {
             ...user,
             onGame: false,
+            datePoint: date + 300000
         }
         dispatch(setUser(fields))
 		save(fields)
@@ -124,7 +126,7 @@ function Biz({ biz }) {
     React.useEffect(() => {
         const interval = setInterval(() => {
             
-            if(biz.requiredTime < (user.time - (bizTime + user.workTime))){
+            if(!biz.requiredTime <= (user.time - (bizTime + user.workTime))){
                 isCounting && setTimeLeft((timeLeft) => (timeLeft >= 10 ? 10 : timeLeft +1 ))
             }
 			
@@ -139,7 +141,7 @@ function Biz({ biz }) {
         return () => {
             clearInterval(interval)
         }
-    },[isCounting, timeLeft])
+    },[isCounting, timeLeft, biz])
 
     return (
         <>

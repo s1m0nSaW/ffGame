@@ -246,7 +246,7 @@ function Main({fetchedUser}) {
             <Stack direction="row"><Typography sx={{ marginTop: '10px'}} variant="subtitle1">Работа</Typography></Stack>
             <Work/></>}
             <List dense>
-            {myBizs.length >= 1 ? <Typography variant="subtitle1">Бизнесы</Typography>:<BizPlaceHolder/>}
+            {myBizs.length >= 1 ? <Typography variant="subtitle1">Бизнес</Typography>:<BizPlaceHolder/>}
             {myBizs.map((biz, index) => (<Biz
             key={index}
             biz={biz}/>

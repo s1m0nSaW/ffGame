@@ -3,6 +3,7 @@ import React from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import Home from './profile/Home'
 import Friends from './profile/Friends'
+import Record from './profile/Raiting';
 import { Header } from '../components/Header'
 import BottomNav from '../components/BottomNav'
 import bridge from '@vkontakte/vk-bridge';
@@ -41,20 +42,20 @@ function Profile({fetchedUser}) {
     <Paper sx={{ width: '100vw', height: '100%', minHeight: '100vh', borderRadius:0 }}>
       <Container>
       <Header fetchedUser={fetchedUser}/> 
-      <Tabs
-      value={value}
-      onChange={handleChange}
-      textColor="secondary"
-      indicatorColor="secondary"
-      >
-        <Tab value="one" label={<Typography variant="body2">Собственность</Typography>} />
-        
-          <Tab onClick={()=>fetchFriends()} value="two" label={<Badge color="secondary" variant="dot" invisible={!greetings}><Typography variant="body2">Друзья</Typography></Badge>} />
-        
-      </Tabs>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          textColor="secondary"
+          indicatorColor="secondary"
+        >
+          <Tab value="one" label={<Typography variant="body2">Собственность</Typography>} />
+          <Tab onClick={() => fetchFriends()} value="two" label={<Badge color="secondary" variant="dot" invisible={!greetings}><Typography variant="body2">Друзья</Typography></Badge>} />
+          <Tab value="three" label={<Typography variant="body2">Мой рекорд</Typography>} />
+        </Tabs>
       
       {value === 'one'&&<Home/>}
       {value === 'two'&&<Friends/>}
+      {value === 'three'&&<Record/>}
       <Toolbar/>
       <BottomNav value={PAGE_PROFILE}/>
       </Container>
