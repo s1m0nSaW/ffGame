@@ -1,5 +1,5 @@
 
-import { AppBar, Avatar, Container, ListItemText, Skeleton, Toolbar, Typography, Stack, Chip, Snackbar, Button, IconButton } from '@mui/material'
+import { AppBar, Avatar, Container, ListItemText, Skeleton, Toolbar, Typography, Stack, Chip, Snackbar, Button, IconButton, Badge } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
 
 import React from 'react'
@@ -15,14 +15,20 @@ import BatteryChargingFullOutlinedIcon from '@mui/icons-material/BatteryCharging
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 
-export const Header = ({fetchedUser}) => {
+export const Header = ({fetchedUser, info}) => {
   const router = useRouter()
   const dispatch = useDispatch()
-  const [open, setOpen] = React.useState(false);
+  const [openEnergizer, setOpenEnergizer] = React.useState(false);
+  const [openTime, setOpenTime] = React.useState(false);
+  const [openAge, setOpenAge] = React.useState(false);
+  const [openInfo, setOpenInfo] = React.useState(false);
   const [energyColor, setEnergyColor] = React.useState("default")
   const [timeLeft, setTimeLeft] = React.useState(0)
   const [enerTime, setEnerTime] = React.useState(0)
+  const [activity, setActivity] = React.useState(<b>E</b>)
+  const [freeTime, setFreeTime] = React.useState(0)
   const user = useSelector((state) => state.user.user)
   const bizs = useSelector((state) => state.bizs.bizs)
   const myBizs = bizs.filter(({_id}) => user.bizs.includes(_id))
@@ -34,6 +40,19 @@ export const Header = ({fetchedUser}) => {
         setEnergyColor("primary")
       } else setEnergyColor("default")
     } else setEnergyColor("default")
+
+    if(user.prof == 'Малый бизнес'||user.prof == 'Средний бизнес'){
+      setActivity(<b>S</b>)
+      setFreeTime(user.time - (bizTime + user.workTime))
+    }
+    if(user.prof == 'Крупный бизнес'){
+      setActivity(<b>B</b>)
+      setFreeTime(user.time)
+    }
+    if(user.prof == 'Инвестор'){
+      setActivity(<b>I</b>)
+      setFreeTime(user.time)
+    }
 
     const interval = setInterval(() => {
       !user.freeEnergizer && setTimeLeft((timeLeft) => (timeLeft >= 100 ? 100 : timeLeft +1 ))
@@ -102,8 +121,9 @@ export const Header = ({fetchedUser}) => {
       </Stack><br/>
       <Stack direction="row" spacing={1}>
         <BatteryChargingFullOutlinedIcon />
-        <Typography>Энергетик пополняет энергию на 5 пунктов. Каждые 24 часа предлагается 10 бесплатных энергетиков, 
-          их колисество можно увеличить до 50, выполнив некоторые условия в настройках.
+        <Typography>Энергетик восстанавливает энергию. Каждые 24 часа предлагается 2 бесплатных энергетика, 
+          их колисество можно увеличить до 10, выполнив некоторые условия в настройках.
+          Энергия - расходуется каждый раз когда фиксируется прибыль от бизнеса.
         </Typography>
       </Stack><br/>
       <Stack direction="row" spacing={1}>
@@ -125,7 +145,12 @@ export const Header = ({fetchedUser}) => {
         size="small"
         aria-label="close"
         color="inherit"
-        onClick={()=>setOpen(false)}
+        onClick={()=>{
+          setOpenAge(false)
+          setOpenEnergizer(false)
+          setOpenTime(false)
+          setOpenInfo(false)
+        }}
       >
         <CloseIcon fontSize="small" />
       </IconButton>
@@ -152,7 +177,6 @@ export const Header = ({fetchedUser}) => {
     return h + ':' + m + ':' + s;
   }
 
-
   return (
       <AppBar component="nav" color="inherit" sx={{padding:'10px', borderRadius:'10px', top: 10, marginBottom: '10px'}} position='sticky'>
         {fetchedUser ?
@@ -160,7 +184,13 @@ export const Header = ({fetchedUser}) => {
           <Stack direction="column" sx={{ width: '100%' }} >
           <Stack direction="row" spacing={1}>
           <Stack>
-            <Avatar onClick={()=>{router.pushPage(PAGE_INTRO)}} src={fetchedUser.photo_200}/>
+            <Badge
+              overlap='rectangular'
+              anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+              badgeContent={activity}
+            >
+              <Avatar onClick={()=>{router.pushPage(PAGE_INTRO)}} src={fetchedUser.photo_200}/>
+            </Badge>
           </Stack>
           <Stack direction="column">
             <Typography variant='caption' >{fetchedUser.first_name} {fetchedUser.last_name}</Typography>
@@ -184,18 +214,21 @@ export const Header = ({fetchedUser}) => {
               <Chip 
                 label={<Typography variant='caption'><b>{user.energizer}</b></Typography>} 
                 icon={<BatteryChargingFullOutlinedIcon sx={{ color: 'black' }}/>} 
+                onClick={()=>setOpenEnergizer(true)}
                 size="small"
                 color="secondary" 
               />
               <Chip 
-                label={<Typography variant='caption'><b>{user.time - (bizTime + user.workTime)}/{user.time}</b></Typography>} 
+                label={<Typography variant='caption'><b>{freeTime}/{user.time}</b></Typography>} 
                 icon={<QueryBuilderOutlinedIcon sx={{ color: 'black' }}/>} 
+                onClick={()=>setOpenTime(true)}
                 size="small" 
                 color="success" 
               />
               <Chip 
                 label={<Typography variant='caption'><b>{Math.trunc(user.age/12)}/60</b></Typography>} 
-                icon={<HourglassEmptyIcon/>} 
+                icon={<AccessibilityNewIcon/>} 
+                onClick={()=>setOpenAge(true)}
                 size="small" 
                 color="warning" 
               />
@@ -205,6 +238,7 @@ export const Header = ({fetchedUser}) => {
               sx={{ marginTop: '15px'}}>
                 {user.freeEnergizerOn ? <Chip label={<b>Энергетики +{user.freeEnergizerCount}</b>} onClick={()=>handleFreeEnergy()} color="primary" icon={<BatteryChargingFullOutlinedIcon />} size="small" />:
                 <Chip label={`Бесплатные через ${parseMillisecondsIntoReadableTime(enerTime)}`} icon={<BatteryChargingFullOutlinedIcon />} size="small" />}
+                <InfoOutlinedIcon onClick={()=>setOpenInfo(true)} color="primary" sx={{marginLeft:'auto'}}/>
               </Stack>
             </Stack>
         </Toolbar> : 
@@ -218,9 +252,32 @@ export const Header = ({fetchedUser}) => {
         </Toolbar>}
         <div>
           <Snackbar
-            open={open}
-            onClose={()=>setOpen(false)}
-            message={textInfo}
+            open={openEnergizer}
+            onClose={()=>setOpenEnergizer(false)}
+            message={<><BatteryChargingFullOutlinedIcon/><Typography><b>Энергетик</b> восстанавливает энергию.<br/><br/> Каждые 24 часа предлагается <b>2 бесплатных энергетика</b>, 
+              их количество можно увеличить до 10, выполнив некоторые условия в <b>настройках</b>.<br/><br/>
+              Энергия - <b>расходуется</b> каждый раз когда фиксируется прибыль от бизнеса.
+            </Typography></>}
+            action={action}
+          />
+          <Snackbar
+            open={openTime}
+            onClose={()=>setOpenTime(false)}
+            message={<><QueryBuilderOutlinedIcon/><Typography>Время <b>необходимо</b> для покупки бизнеса.<br/><br/> Максимальное количество времени 14 ч.<br/><br/> Увеличить до максимума можно купив транспорт.
+              </Typography></>}
+            action={action}
+          />
+          <Snackbar
+            open={openAge}
+            onClose={()=>setOpenAge(false)}
+            message={<><AccessibilityNewIcon/><Typography>Возраст игрока на данный момент, по достижении 60 лет игра заканчивается.
+              </Typography></>}
+            action={action}
+          />
+          <Snackbar
+            open={openInfo}
+            onClose={()=>setOpenInfo(false)}
+            message={info}
             action={action}
           />
         </div>

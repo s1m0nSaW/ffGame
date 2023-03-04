@@ -33,6 +33,7 @@ function Work() {
     const quit = () => {
         const fields = {
 			...user,
+            prof: 'Малый бизнес',
             workTime: 0,
             salary: 0,
 		}
@@ -41,8 +42,8 @@ function Work() {
 
     React.useEffect(() => {
         const ageInterval = setInterval(() => {
-            setAgeTime((ageTime) => (ageTime >= 100 ? 100 : ageTime +1 ))
-            if (ageTime == 100 ) {
+            setAgeTime((ageTime) => (ageTime >= 99 ? 99 : ageTime +1 ))
+            if (ageTime == 99 ) {
                 agePlus()
 				setAgeTime(0)
             }

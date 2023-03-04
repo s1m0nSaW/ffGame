@@ -6,7 +6,7 @@ import { PAGE_MAIN, PAGE_PROPERTY, PAGE_BANK, PAGE_PROFILE } from '../routers';
 
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import HomeIcon from '@mui/icons-material/Home';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 function BottomNav({value}) {
@@ -31,7 +31,7 @@ function BottomNav({value}) {
             }/>
             <BottomNavigationAction label='Профиль' value={PAGE_PROFILE} icon={
                 <Badge color="secondary" variant="dot" invisible={!greetings}>
-                    <HomeIcon/>
+                    <AccountCircleIcon/>
                 </Badge>
             }/>
 

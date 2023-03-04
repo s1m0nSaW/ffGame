@@ -1,5 +1,7 @@
-import { Toolbar, Paper, Tab, Tabs, Container } from '@mui/material'
+import { Toolbar, Paper, Tab, Tabs, Container, Typography } from '@mui/material'
 import React from 'react'
+
+import HandshakeIcon from '@mui/icons-material/Handshake';
 
 import BizList from './shop/BizList';
 import CarList from './shop/CarList';
@@ -17,10 +19,24 @@ function Property({fetchedUser}) {
         setValue(newValue);
     }
 
+    const Info = (
+    <>
+        <HandshakeIcon />
+        <Typography>
+            На вкладке <b>СДЕЛКИ</b> можно купить бизнес, транспорт, недвижимость.<br/><br/>
+            В начале для покупки бизнеса, помимо денег, <b>необходимо</b> наличие свободного времени.<br/>
+            При <b>покупке</b> бизнеса ценой более 20 000 К и 50 000 К <b>деятельность</b> игрока меняется на <b>'Средний бизнес'</b> и <b>'Крупный бизнес'</b> соответственно.<br/><br/>
+            Если у игрока деятельность <b>'Средний бизнес', 'Крупный бизнес' и 'Инвестор'</b> для покупки бизнеса наличие свободного времени не требуется.<br/><br/>
+            Недвижимость <b>увеличивает</b> максимальное количество энергии.<br/><br/>
+            Транспорт <b>увеличивает</b> время и максимальную энергию.
+        </Typography>
+    </>
+    )
+
     return (
         <Paper sx={{ width: '100vw', height: '100%', minHeight: '100vh', borderRadius:0 }}>
             <Container>
-            <Header fetchedUser={fetchedUser}/>
+            <Header fetchedUser={fetchedUser} info={Info}/>
             <Tabs
             value={value}
             onChange={handleChange}

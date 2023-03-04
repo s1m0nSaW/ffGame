@@ -11,6 +11,7 @@ import PaymentsIcon from '@mui/icons-material/Payments';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
+import EngineeringIcon from '@mui/icons-material/Engineering';
 
 function Biz({ biz }) {
 
@@ -30,6 +31,12 @@ function Biz({ biz }) {
     const Service = () => {
         return(
             <HomeRepairServiceIcon color={"secondary"} onClick={()=>setOpen(true)}/>
+        )
+    }
+
+    const Production = () => {
+        return(
+            <EngineeringIcon onClick={()=>setOpen(true)} />
         )
     }
 
@@ -65,6 +72,9 @@ function Biz({ biz }) {
         if(biz.bizType == "Торговля") {
             setColor("success")
             setBizIcon(Market)
+        }else
+        if(biz.bizType == "Производство") {
+            setBizIcon(Production)
         }
     },[biz.bizType])
 
@@ -76,7 +86,7 @@ function Biz({ biz }) {
 
     const result = () => {
 		setIsCounting(false)
-		const p = getRandomIntInclusive( -150, biz.maxProfit)
+		const p = getRandomIntInclusive( biz.minProfit, biz.maxProfit)
         if( p > 0 ) {setProfitColor(green[700])} else {setProfitColor(pink[500])}
 		setProfit(p)
 	}
@@ -85,7 +95,7 @@ function Biz({ biz }) {
         setIsCounting(true)
         if (timeLeft == 10)setTimeLeft(0)
         const newBalance = user.balance + price
-        const newEnergy = user.energy - requiredEnergy
+        const newEnergy = user.energy - 3
         const fields = {
 			...user,
 			balance: newBalance,
@@ -126,7 +136,7 @@ function Biz({ biz }) {
     React.useEffect(() => {
         const interval = setInterval(() => {
             
-            if(!biz.requiredTime <= (user.time - (bizTime + user.workTime))){
+            if(!biz.requiredTime <= (user.time - (bizTime + user.workTime))||user.prof == 'Средний бизнес'||user.prof == 'Крупный бизнес'){
                 isCounting && setTimeLeft((timeLeft) => (timeLeft >= 10 ? 10 : timeLeft +1 ))
             }
 			
@@ -180,11 +190,9 @@ function Biz({ biz }) {
             <DialogContent>
             <DialogContentText>
                 Вид бизнеса: <b>{biz.bizType}</b><br/>
-                Расход энергии: <b>{biz.requiredEnergy}</b><br/>
                 Расход времени: <b>{biz.requiredTime}ч.</b><br/>
                 Максимальная прибыль: <b>{biz.maxProfit} K</b><br/>
                 Минимальная прибыль: <b>{biz.minProfit} K</b><br/>
-                Риск: <b>{biz.risk}</b><br/>
                 Сумма продажи: <b>{biz.sellPrice} K</b><br/>
             </DialogContentText>
             </DialogContent>

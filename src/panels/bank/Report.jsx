@@ -108,6 +108,10 @@ function Report() {
   return (
     <Container disableGutters>
       <Stack direction="row">
+        <Typography variant="subtitle1">Деятельность:</Typography>
+        <Typography sx={{marginLeft:'auto'}} variant="subtitle1">{user.prof}&nbsp;&nbsp;&nbsp;&nbsp;</Typography>
+      </Stack>
+      <Stack direction="row">
         <Typography variant="subtitle1">Долги</Typography>
       </Stack>
       <List>
@@ -138,6 +142,7 @@ function Report() {
               secondary={'Погашать необходимо ежегодно'} />
         </ListItem>
       </List>
+      
       <Stack direction="row">
         <Typography variant="subtitle1">Доходы</Typography>
       </Stack>
@@ -145,7 +150,7 @@ function Report() {
         <ListItem 
         disablePadding
         secondaryAction={
-          <Typography variant="body2" sx={{ color: 'green' }}>{Math.round((user.deposit.amount * 0.13)/12)} K/мес</Typography>}>
+          <Typography variant="body2" sx={{ color: 'green' }}>~ {Math.round((user.deposit.amount * 0.13)/12)} K/мес</Typography>}>
           <ListItemText primary={<Typography variant="body2">Дивиденды</Typography>} />
         </ListItem>
         <ListItem 

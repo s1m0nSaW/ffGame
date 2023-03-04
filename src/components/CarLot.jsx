@@ -13,8 +13,9 @@ function CarLot({car,isMy}) {
     const [ disabled, setDisabled ] = React.useState(true)
 
     React.useEffect(()=>{
-        if(user.balance > car.price) setDisabled(false)
-    },[user.balance])
+        if(user.balance >= car.price) setDisabled(false)
+        if(user.balance < car.price) setDisabled(true)
+    },[user])
 
     const buyCar = () => {
         const newBalance = user.balance - car.price
@@ -135,7 +136,7 @@ function CarLot({car,isMy}) {
         <CardMedia
             component="img"
             height="140"
-            image={`http://localhost:4444${car.imageUrl}`}
+            image={`https://financial-freedom-game.ru${car.imageUrl}`}
         />
         <CardContent>
             {isMy ? <Typography gutterBottom variant="subtitle2">{car.name}</Typography> : <Typography gutterBottom variant="h6">
@@ -152,7 +153,6 @@ function CarLot({car,isMy}) {
         <CardActions>
             {isMy ? <Button size="small" onClick={()=>sellCar()}>Продать</Button>:
             <Button disabled={disabled} size="small" onClick={()=>buyCar()}>Купить</Button>}
-            <Button disabled={disabled} size="small" onClick={()=>console.log(carsTime)}>test</Button>
         </CardActions>
         </Card></Grid>
   )

@@ -72,7 +72,7 @@ function Friend({friend, invisible, disabled }) {
             <ListItemText
                 primary={<Typography variant="subtitle1">{friend.firstName}</Typography>}
                 secondary={
-                        <Typography variant='caption'>Рекорд: в {friend.record.age} лет</Typography>
+                        <Typography variant='caption'>Рекорд: {friend.record.cashflow} K</Typography>
                     }
             />
         </ListItem>
@@ -81,7 +81,7 @@ function Friend({friend, invisible, disabled }) {
             <ListItem>
                 <Stack direction={'column'} sx={{ width:'100%'}}>
                     <Stack justifyContent="space-between" alignItems="flex-start" direction={'row'}>
-                        <Typography variant='caption'>Профессия:</Typography>
+                        <Typography variant='caption'>Деятельность:</Typography>
                         <Typography variant='caption'><b> {friend.record.prof}</b></Typography>
                     </Stack> 
                     <Stack justifyContent="space-between" alignItems="flex-start" direction={'row'}>

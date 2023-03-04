@@ -9,9 +9,10 @@ import BottomNav from '../components/BottomNav'
 import bridge from '@vkontakte/vk-bridge';
 import { PAGE_PROFILE } from '../routers'
 import { setFriends } from '../redux/slices/userSlice';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-function Profile({fetchedUser}) {
-  const [ value, setValue ] = React.useState("one")
+function Profile({ fetchedUser }) {
+  const [value, setValue] = React.useState("one")
   const greetings = useSelector((state) => state.user.greetings)
   const dispatch = useDispatch()
   const handleChange = (event, newValue) => {
@@ -38,10 +39,25 @@ function Profile({fetchedUser}) {
     dispatch(setFriends(data.response.items))
   }
 
+  const Info = (
+    <>
+    <AccountCircleIcon/>
+    <Typography>На вкладке <b>ПРОФИЛЬ</b> можно<br/>
+      -посмотреть собственность<br/>
+      -продать ее<br/>
+      -сдать недвижимость в аренду<br/>
+      -поприветствовать друзей<br/>
+      -посмотреть их рекорды<br/><br/>
+      При взаимном <b>приветствии</b> каждому игроку добавляется по энергетику<br/><br/>
+      <b>Рекорд сохраняется</b> только если нет кредитов
+    </Typography>
+    </>
+  )
+
   return (
-    <Paper sx={{ width: '100vw', height: '100%', minHeight: '100vh', borderRadius:0 }}>
+    <Paper sx={{ width: '100vw', height: '100%', minHeight: '100vh', borderRadius: 0 }}>
       <Container>
-      <Header fetchedUser={fetchedUser}/> 
+        <Header fetchedUser={fetchedUser} info={Info} />
         <Tabs
           value={value}
           onChange={handleChange}
@@ -52,12 +68,12 @@ function Profile({fetchedUser}) {
           <Tab onClick={() => fetchFriends()} value="two" label={<Badge color="secondary" variant="dot" invisible={!greetings}><Typography variant="body2">Друзья</Typography></Badge>} />
           <Tab value="three" label={<Typography variant="body2">Мой рекорд</Typography>} />
         </Tabs>
-      
-      {value === 'one'&&<Home/>}
-      {value === 'two'&&<Friends/>}
-      {value === 'three'&&<Record/>}
-      <Toolbar/>
-      <BottomNav value={PAGE_PROFILE}/>
+
+        {value === 'one' && <Home />}
+        {value === 'two' && <Friends />}
+        {value === 'three' && <Record />}
+        <Toolbar />
+        <BottomNav value={PAGE_PROFILE} />
       </Container>
     </Paper>
   )

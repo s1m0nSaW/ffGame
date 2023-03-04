@@ -10,6 +10,11 @@ function CarList() {
 	const cars = useSelector((state) => state.cars.cars)
     const c = new Set(user.car)
 	const avCars = cars.filter(({_id}) => !c.has(_id))
+
+    function byField(field) {
+        return (a, b) => a[field] > b[field] ? 1 : -1;
+    }
+
     return (
         <>
         {avCars.length >= 1 ? <Grid
@@ -19,7 +24,7 @@ function CarList() {
         justifyContent="flex-start"
         alignItems="stretch"
         >
-            {avCars.map((car, index) => (
+            {avCars.sort(byField('price')).map((car, index) => (
             <CarLot key={index} car={car}/>
             ))}
         </Grid> : <Stack direction="column"

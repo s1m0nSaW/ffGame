@@ -21,22 +21,23 @@ function HouseLot({house, isMy, isRent}) {
                 if(myHouses.length <= 1) setDisabled(true)
             }
         } else {
-            if(user.balance > house.price) setDisabled(false)
+            if(user.balance >= house.price) setDisabled(false)
+            if(user.balance < house.price) setDisabled(true)
         }
-    },[myHouses])
+    },[isMy, isRent, myHouses, user])
 
     const buyHouse = () => {
         const newBalance = user.balance - house.price
-		const myHouse = [...user.house,house._id]
+        const myHouse = [...user.house, house._id]
         const myEnergy = user.maxEnergy + house.energy
-		const fields = {
-			...user,
-			balance: newBalance,
-			house: myHouse,
+        const fields = {
+            ...user,
+            balance: newBalance,
+            house: myHouse,
             maxEnergy: myEnergy,
-		}
-		dispatch(setUser(fields))
-		save(fields)
+        }
+        dispatch(setUser(fields))
+        save(fields)
     }
 
     const sellHouse = () => {
@@ -70,14 +71,28 @@ function HouseLot({house, isMy, isRent}) {
 		const myHouse = myHouses.filter((house) => house._id !== isMy)
         const myEnergy = user.maxEnergy - house.energy
         const rentHouse = [...user.rent,house._id]
-		const fields = {
-			...user,
-			house: myHouse.map(item => item._id),
-            maxEnergy: myEnergy,
-            rent: rentHouse,
-		}
-		dispatch(setUser(fields))
-		save(fields)
+        const myRents = houses.filter(({_id}) => rentHouse.includes(_id))
+        const sumRent = myRents.map(item => item.rentPrice).reduce((prev, curr) => prev + curr, 0)
+        if(sumRent > 1000){
+            const fields = {
+                ...user,
+                prof: 'Инвестор',
+                house: myHouse.map(item => item._id),
+                maxEnergy: myEnergy,
+                rent: rentHouse,
+            }
+            dispatch(setUser(fields))
+            save(fields)
+        } else {
+            const fields = {
+                ...user,
+                house: myHouse.map(item => item._id),
+                maxEnergy: myEnergy,
+                rent: rentHouse,
+            }
+            dispatch(setUser(fields))
+            save(fields)
+        }
 	}
     
     const derentHouse = () => {
@@ -104,7 +119,7 @@ function HouseLot({house, isMy, isRent}) {
         <CardMedia
             component="img"
             height="140"
-            image={`http://localhost:4444${house.imageUrl}`}
+            image={`https://financial-freedom-game.ru${house.imageUrl}`}
         />
         <CardContent>
             {isMy ? <Stack direction="row"><Typography gutterBottom variant="subtitle2">{house.name}</Typography>

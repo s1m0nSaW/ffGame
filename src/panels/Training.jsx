@@ -40,7 +40,7 @@ function Training() {
                     <img src={profile}/>
                 </ImageListItem>
                 <Toolbar/>
-                <Button onClick={()=>router.pushPage(PAGE_REGISTER)}>Начать</Button>
+                <Button onClick={()=>router.popPage()}>Назад</Button>
                 <Toolbar/>
             </ImageList>
             </Stack>

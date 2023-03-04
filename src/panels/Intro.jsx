@@ -37,7 +37,7 @@ function Intro({fetchedUser}) {
             spacing={1}
           >
             <Button disabled={firstTime} onClick={() => router.pushPage(PAGE_MAIN)}>Играть</Button>
-            <Button disabled={firstTime} onClick={() => router.pushPage(PAGE_REGISTER)}>Новая игра</Button>
+            <Button onClick={() => router.pushPage(PAGE_REGISTER)}>Новая игра</Button>
             <Button onClick={() => router.pushPage(PAGE_TRAINING)}>Обучение</Button>
             <Button onClick={() => router.pushPage(PAGE_SETTINGS)}>Настройки</Button>
           </Stack>

@@ -111,8 +111,6 @@ function Credit() {
                         <MenuItem value={100}>100 К</MenuItem>
                         <MenuItem value={200}>200 К</MenuItem>
                         <MenuItem value={500}>500 К</MenuItem>
-                        <MenuItem value={1000}>1000 К</MenuItem>
-                        <MenuItem value={5000}>5000 К</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>
@@ -129,8 +127,6 @@ function Credit() {
                         <MenuItem value={12}>12 мес</MenuItem>
                         <MenuItem value={24}>24 мес</MenuItem>
                         <MenuItem value={60}>60 мес</MenuItem>
-                        <MenuItem value={120}>120 мес</MenuItem>
-                        <MenuItem value={240}>240 мес</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>

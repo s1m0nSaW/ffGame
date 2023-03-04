@@ -9,6 +9,7 @@ import axios from '../axios.js'
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
+import EngineeringIcon from '@mui/icons-material/Engineering';
 
 function BizLot({biz}) {
     const dispatch = useDispatch()
@@ -38,6 +39,12 @@ function BizLot({biz}) {
         )
     }
 
+    const Production = () => {
+        return(
+            <EngineeringIcon />
+        )
+    }
+
     const SkeletonIcon = () => {
         return(
             <Skeleton animation="wave" variant="circular" width={40} height={40} />
@@ -57,14 +64,21 @@ function BizLot({biz}) {
         } else
         if(biz.bizType == "Торговля") {
             setBizIcon(Market)
+        } else
+        if(biz.bizType == "Производство") {
+            setBizIcon(Production)
         }
-        
-        if(biz.bizPrice <= user.balance && biz.requiredTime <= (user.time - (bizTime + user.workTime))){ 
+
+        if (biz.bizPrice <= user.balance && user.prof == 'Средний бизнес'||biz.bizPrice <= user.balance && user.prof == 'Крупный бизнес'|| biz.bizPrice <= user.balance && user.prof == 'Инвестор') {
             setDisabled(false)
-        }
-        
-        if(biz.bizPrice > user.balance || biz.requiredTime > (user.time - (bizTime + user.workTime))){ 
-            setDisabled(true)
+        } else {
+            if (biz.bizPrice <= user.balance && biz.requiredTime <= (user.time - (bizTime + user.workTime))) {
+                setDisabled(false)
+            }
+
+            if (biz.bizPrice > user.balance || biz.requiredTime > (user.time - (bizTime + user.workTime))) {
+                setDisabled(true)
+            }
         }
 
     },[biz, user])
@@ -73,16 +87,42 @@ function BizLot({biz}) {
 		await axios.patch(`/auth/${user._id}`, data)}
 
     const buyBiz = ( id, price ) => {
-        const newBalance = user.balance - price
-		const myBizs = [...user.bizs,id]
-		const fields = {
-			...user,
-			balance: newBalance,
-			bizs: myBizs,
-		}
-		
-		dispatch(setUser(fields))
-		save(fields)
+        if (price >= 20000 && price < 50000) {
+            const newBalance = user.balance - price
+            const myBizs = [...user.bizs, id]
+            const fields = {
+                ...user,
+                prof: 'Средний бизнес',
+                balance: newBalance,
+                bizs: myBizs,
+            }
+
+            dispatch(setUser(fields))
+            save(fields)
+        } else if (price >= 50000) {
+            const newBalance = user.balance - price
+            const myBizs = [...user.bizs, id]
+            const fields = {
+                ...user,
+                prof: 'Крупный бизнес',
+                balance: newBalance,
+                bizs: myBizs,
+            }
+
+            dispatch(setUser(fields))
+            save(fields)
+        } else {
+            const newBalance = user.balance - price
+            const myBizs = [...user.bizs, id]
+            const fields = {
+                ...user,
+                balance: newBalance,
+                bizs: myBizs,
+            }
+
+            dispatch(setUser(fields))
+            save(fields)
+        }
     }
 
     return (
@@ -122,7 +162,6 @@ function BizLot({biz}) {
             <DialogContent>
             <DialogContentText>
                 Вид бизнеса: <b>{biz.bizType}</b><br/>
-                Расход энергии: <b>{biz.requiredEnergy}</b><br/>
                 Необходимое время: <b>{biz.requiredTime}ч.</b><br/>
                 Максимальная прибыль: <b>{biz.maxProfit} K</b><br/>
                 Минимальная прибыль: <b>{biz.minProfit} K</b><br/>

@@ -9,7 +9,7 @@ function Record() {
     <Box sx={{ width: '100%' }} >
       <Stack direction={'column'} sx={{ width: '100%' }}>
         <Stack justifyContent="space-between" alignItems="flex-start" direction={'row'}>
-          <Typography variant='caption'>Профессия:</Typography>
+          <Typography variant='caption'>Деятельность:</Typography>
           <Typography variant='caption'><b> {user.record.prof}</b></Typography>
         </Stack>
         <Stack justifyContent="space-between" alignItems="flex-start" direction={'row'}>

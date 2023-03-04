@@ -16,6 +16,7 @@ import SavingsIcon from '@mui/icons-material/Savings';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import BusinessIcon from '@mui/icons-material/Business';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { Panel } from '@vkontakte/vkui';
 
 function Main({fetchedUser}) {
@@ -60,7 +61,26 @@ function Main({fetchedUser}) {
     }
 
     const ageLimitListener = () => {
-        if(user.age >= 720) {
+        if (user.age >= 720) {
+            //Math.trunc(user.age/12),user.prof,Math.round(((user.deposit.amount * 0.13)/12) + sumRent)
+            if (user.record.cashflow < Math.round(((user.deposit.amount * 0.13) / 12) + sumRent)) {
+                if(sumCreditsPayments==0){const newRecord = {
+                    prof: user.prof,
+                    age: Math.trunc(user.age / 12),
+                    cashflow: Math.round(((user.deposit.amount * 0.13) / 12) + sumRent),
+                    bizCount: myBizs.length,
+                    deposit: user.deposit.amount,
+                    rentCount: myRents.length,
+                    houseSumm: sumHouses + sumRents,
+                    carSum: sumCars,
+                }
+                const fields = {
+                    ...user,
+                    record: newRecord,
+                }
+                dispatch(setUser(fields))
+                save(fields)}
+            }
             setAgeLimit(true)
         }
     }
@@ -158,7 +178,6 @@ function Main({fetchedUser}) {
         const ageInterval = setInterval(() => {
             bankrotListener()
             ageLimitListener()
-            winningListener()
 
             user.onGame && setAgeTime((ageTime) => (ageTime >= 1198 ? 1198 : ageTime +1 ))
             if (ageTime == 1198 ) {
@@ -167,9 +186,9 @@ function Main({fetchedUser}) {
                 }
                 setAgeTime(0)
             }
-            if (ageTime == 100 || ageTime == 200 || ageTime == 300 || ageTime == 400 ||  
-                ageTime == 500 ||  ageTime == 600 ||  ageTime == 700 ||  ageTime == 800 ||  
-                ageTime == 900 ||  ageTime == 1000 ||  ageTime == 1100 ||  ageTime == 1197) {
+            if (ageTime == 101 || ageTime == 201 || ageTime == 301 || ageTime == 401 ||  
+                ageTime == 501 ||  ageTime == 601 ||  ageTime == 701 ||  ageTime == 801 ||  
+                ageTime == 901 ||  ageTime == 1001 ||  ageTime == 1101 ||  ageTime == 1197) {
                     accruePayments()
                 }
             const date = +new Date
@@ -236,10 +255,22 @@ function Main({fetchedUser}) {
         </Stack>)
     }
 
+    const Info = (
+        <><MonetizationOnIcon/>
+        <Typography>
+            На <b>ГЛАВНОЙ</b> вкладке показаны доходы<br/><br/>
+            Каждый месяц (<b>10 секунд</b>) начисляется зарплата, нажав на иконку можно уволиться.<br/><br/>
+            После того как индикатор <b>бизнеса</b> заполнится, нужно зафиксировать прибыль. Продать бизнес можно нажав на его иконку.<br/><br/>
+            Доходы от <b>вклада</b> и <b>аренды недвижимости</b> так же нужно забирать нажатием на соответствующую иконку.<br/><br/>
+            <b>Игровое время</b> идет только на этой вкладке<br/><br/>
+            Игра <b>сохраняется</b> автоматически<br/><br/>
+        </Typography></>
+    )
+
     return (
         <Paper sx={{ width: '100vw', height: '100%', minHeight: '100vh', borderRadius:0 }}>
             <Container>
-            <Header fetchedUser={fetchedUser}/>
+            <Header fetchedUser={fetchedUser} info={Info}/>
             {user.onGame ? 
             <>
             {user.salary != 0 && <>
@@ -280,10 +311,7 @@ function Main({fetchedUser}) {
             </List>
             <List dense> 
                 {myRents.length >= 1 ? <><Typography variant="subtitle1">Аренда</Typography></> : <RentPlaceHolder/>}
-                {myRents.map((house) => (<Rent
-                key={house._id}
-                house={house}/>
-                ))}
+                {myRents.length >= 1 && <Rent/>}
             </List>
             <Toolbar/></> : 
             <Stack
@@ -337,7 +365,19 @@ function Main({fetchedUser}) {
                 <Typography>
                     Игра закончена
                 </Typography><br/>
-                <Typography variant='caption'>Вы достигли предельного возраста 😥</Typography><br/><br/>
+                <Typography variant='caption'>
+                    Вы достигли предельного возраста.<br/>
+
+                    Вы достигли финансовой свободы в возрасте <b>{Math.trunc(user.age/12)}</b>, с начальной профессией <b>{user.prof}</b>, 
+                    с суммой пассивного дохода <b>{Math.round(((user.deposit.amount * 0.13)/12) + sumRent)}</b>
+                </Typography>
+                {user.record.cashflow > Math.round(((user.deposit.amount * 0.13)/12) + sumRent) ? 
+                <Typography variant='caption'>
+                    К сожалению на этот раз рекорд в {user.record.cashflow}К не побит.<br/> 
+                </Typography>:
+                <Typography variant='caption'>
+                    Новый рекорд! Пассивный доход - <b>{Math.round(((user.deposit.amount * 0.13)/12) + sumRent)} К</b>
+                </Typography>}<br/><br/>
                 <Button onClick={()=>router.pushPage(PAGE_REGISTER)}>Начать заново</Button>
                 </Box>
             </Modal>

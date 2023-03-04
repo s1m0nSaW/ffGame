@@ -12,6 +12,11 @@ function HouseList() {
 	const avHouses = houses.filter(({_id}) => !c.has(_id))
     const c2 = new Set(user.rent)
 	const avHouses2 = avHouses.filter(({_id}) => !c2.has(_id))
+
+    function byField(field) {
+        return (a, b) => a[field] > b[field] ? 1 : -1;
+    }
+
     return (
         <>
         {avHouses2.length >= 1 ? <Grid
@@ -21,7 +26,7 @@ function HouseList() {
         justifyContent="flex-start"
         alignItems="stretch"
         >
-            {avHouses2.map((house, index) => (<HouseLot
+            {avHouses2.sort(byField('price')).map((house, index) => (<HouseLot
             key={index}
             house={house}/>
             ))}

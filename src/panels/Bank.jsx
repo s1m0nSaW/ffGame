@@ -1,5 +1,7 @@
-import { Paper, Tab, Tabs, Container } from '@mui/material'
+import { Paper, Tab, Tabs, Container, Typography } from '@mui/material'
 import React from 'react'
+
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 import Report from './bank/Report.jsx';
 import Credit from './bank/Credit.jsx';
@@ -16,10 +18,23 @@ function Bank({fetchedUser}) {
     setValue(newValue);
   }
 
+  const Info = (
+    <>
+      <AccountBalanceIcon />
+      <Typography>
+        На вкладке <b>БАНК</b> можно<br/>
+        - посмотреть информацию о личных финансах<br/>
+        - оформить кредит<br/>
+        - сделать вклад<br/>
+        - оплатить задолженности
+      </Typography>
+    </>
+  )
+
   return (
     <Paper sx={{ width: '100vw', height: '100%', minHeight: '100vh', borderRadius:0 }}>
       <Container>
-      <Header fetchedUser={fetchedUser}/>
+      <Header fetchedUser={fetchedUser} info={Info}/>
       <Tabs
       value={value}
       onChange={handleChange}

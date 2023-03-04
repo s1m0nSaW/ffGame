@@ -2,18 +2,24 @@ import React from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '../redux/slices/userSlice';
 
-import { Avatar, Typography, LinearProgress, ListItem, ListItemAvatar, ListItemText, Divider } from '@mui/material'
+import { Avatar, Typography, LinearProgress, ListItem, ListItemAvatar, ListItemText, Divider, Stack, IconButton } from '@mui/material'
 
 import BusinessIcon from '@mui/icons-material/Business';
+import PaymentsIcon from '@mui/icons-material/Payments';
 
-function Rent({house}) {
+function Rent() {
     const [timeLeft, setTimeLeft] = React.useState(0)
+    const [isCounting, setIsCounting] = React.useState(true)
     const value = timeLeft
     const dispatch = useDispatch()
     const user = useSelector((state) => state.user.user)
+    const houses = useSelector((state) => state.houses.houses)
+    const myRents = houses.filter(({_id}) => user.rent.includes(_id))
+    const sumRent = myRents.map(item => item.rentPrice).reduce((prev, curr) => prev + curr, 0)
 
     const result = () => {
-		const newBalance = user.balance + house.rentPrice
+        setIsCounting(true)
+		const newBalance = user.balance + sumRent
 		const fields = {
 			...user,
 			balance: newBalance,
@@ -25,10 +31,10 @@ function Rent({house}) {
     React.useEffect(() => {
         const interval = setInterval(() => {
             
-            setTimeLeft((timeLeft) => (timeLeft >= 100 ? 100 : timeLeft +1 ))
+            isCounting && setTimeLeft((timeLeft) => (timeLeft >= 100 ? 100 : timeLeft +1 ))
 			
             if (timeLeft == 100) {
-				result()
+				setIsCounting(false)
 			}
         },100)
         return () => {
@@ -39,14 +45,24 @@ function Rent({house}) {
     return (
         <>
         <ListItem disablePadding
-          secondaryAction={<Typography variant="h6">{house.rentPrice} K</Typography>}>
+          secondaryAction={<Stack alignItems="flex-end">
+            <Typography variant="h6">{sumRent} K</Typography>
+            <IconButton 
+                        onClick={()=>result()} 
+                        color="primary" 
+                        disabled={isCounting} 
+                        variant="contained" 
+                        size="small"
+                    ><PaymentsIcon/>
+                    </IconButton>
+            </Stack>}>
             <ListItemAvatar>
             <Avatar>
                 <BusinessIcon color="action"/>
             </Avatar>
             </ListItemAvatar>
             <ListItemText
-                primary={<Typography variant="body2">{house.name}</Typography>}
+                primary={<Typography variant="body2">Недвижимость в аренде</Typography>}
                 secondary={<LinearProgress sx={{ width: 1/2 }} variant="determinate" value={value} color="inherit"/>}
             />
         </ListItem>
