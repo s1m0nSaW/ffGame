@@ -155,12 +155,21 @@ function Register({ fetchedUser }) {
 
   return (
     <Paper sx={{ width: '100vw', height: '100%', minHeight: '100vh', borderRadius:0 }}>
+      
       <Stack 
       sx={{ width: '100vw', height: '100vh' }}
       direction={'column'}
       alignItems='center'
-      justifyContent='center'
+      justifyContent='top'
       spacing={1}>
+        <Typography variant='subtitle2' sx={{ width: '80vw', marginBottom:'20px', marginTop: "50px"}}>
+          КВАДРАНТ ДЕНЕЖНОГО ПОТОКА – это простой и надежный инструмент, позволяющий распределять людей по группам в соответствии с источником происхождения их денег.<br /><br />
+          E (Employee) - Наёмный сотрудник.<br />
+          S (Self-Employed) - Работа на себя.<br />
+          B (Business Owner) - Владелец бизнеса.<br />
+          I (Investor) - Инвестор.<br /><br />
+          ЦЕЛЬ ИГРЫ: стать владельцем бизнеса или инвестором.
+        </Typography>
         {profession ? <><Typography variant='subtitle1'>Профессия:</Typography>
         <Typography variant='h6'>{profession.profName}</Typography>
         <Typography variant='caption'>Для начала игры необходимо выбрать профессию</Typography>
