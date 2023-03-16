@@ -98,7 +98,6 @@ function BizLot({biz}) {
             }
 
             dispatch(setUser(fields))
-            save(fields)
         } else if (price >= 50000) {
             const newBalance = user.balance - price
             const myBizs = [...user.bizs, id]
@@ -110,7 +109,6 @@ function BizLot({biz}) {
             }
 
             dispatch(setUser(fields))
-            save(fields)
         } else {
             const newBalance = user.balance - price
             const myBizs = [...user.bizs, id]
@@ -121,7 +119,6 @@ function BizLot({biz}) {
             }
 
             dispatch(setUser(fields))
-            save(fields)
         }
     }
 

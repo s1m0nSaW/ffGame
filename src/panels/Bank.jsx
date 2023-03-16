@@ -10,6 +10,7 @@ import { Header } from '../components/Header.jsx';
 import BottomNav from '../components/BottomNav.jsx';
 import { Panel } from '@vkontakte/vkui';
 import { PAGE_BANK } from '../routers.js';
+import Head from '../components/Head.jsx';
 
 function Bank({fetchedUser}) {
   const [ value, setValue ] = React.useState("one")
@@ -33,6 +34,7 @@ function Bank({fetchedUser}) {
 
   return (
     <Paper sx={{ width: '100vw', height: '100%', minHeight: '100vh', borderRadius:0 }}>
+      <Head name={'Банк'}/>
       <Container>
       <Header fetchedUser={fetchedUser} info={Info}/>
       <Tabs

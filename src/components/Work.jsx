@@ -63,7 +63,7 @@ function Work() {
             </Avatar>
             </ListItemAvatar>
             <ListItemText
-                primary={<React.Fragment>Профессия: {user.prof}<br/></React.Fragment>}
+                primary={<React.Fragment>Деятельность: {user.prof}<br/></React.Fragment>}
                 secondary={<LinearProgress sx={{ width: 1/2 }} variant="determinate" value={ageTime} color="inherit"/>}
             />
         </ListItem>
@@ -77,7 +77,7 @@ function Work() {
             </DialogTitle>
             <DialogContent>
             <DialogContentText>
-                Профессия: <b>{user.prof}</b><br/>
+                Деятельность: <b>{user.prof}</b><br/>
                 Расход времени: <b>8ч.</b><br/>
                 Расходы на дом: <b>{sumHouseExp} K</b><br/>
                 Расходы на транспорт: <b>{sumCarExp} K</b><br/>

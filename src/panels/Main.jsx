@@ -1,10 +1,10 @@
 import { IconButton, Toolbar, List, Container, Stack, Typography, ListItem, ListItemAvatar, Avatar, ListItemText, LinearProgress, Modal, Box, Button, Paper } from '@mui/material'
-import { grey } from '@mui/material/colors';
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from '@happysanta/router'
-import { setUser } from '../redux/slices/userSlice';
+import { setUser, setExpenditure } from '../redux/slices/userSlice';
 import axios from '../axios.js'
+import bridge from '@vkontakte/vk-bridge'
 import { PAGE_PAUSE, PAGE_REGISTER, PAGE_MAIN } from '../routers';
 
 import { Header } from '../components/Header.jsx';
@@ -17,7 +17,7 @@ import PaymentsIcon from '@mui/icons-material/Payments';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import BusinessIcon from '@mui/icons-material/Business';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import { Panel } from '@vkontakte/vkui';
+import Head from '../components/Head';
 
 function Main({fetchedUser}) {
     const dispatch = useDispatch()
@@ -51,7 +51,7 @@ function Main({fetchedUser}) {
     const [remind, setRemind] = React.useState(false)
     const [bankrot, setBankrot] = React.useState(false)
     const [ageLimit, setAgeLimit] = React.useState(false)
-    const [winning, setWinning] = React.useState(false)
+    const [recordModal, setRecordModal] = React.useState(false)
 
     const bankrotListener = () => {
         if(user.balance < (user.debts+sumCreditsDebt) && user.credits.length >= 5 && myHouses.length <= 1 
@@ -71,49 +71,18 @@ function Main({fetchedUser}) {
                     bizCount: myBizs.length,
                     deposit: user.deposit.amount,
                     rentCount: myRents.length,
-                    houseSumm: sumHouses + sumRents,
-                    carSum: sumCars,
+                    houseSumm: sumHouses + sumRents + sumCars,
+                    carSum: user.record.carSum,
                 }
                 const fields = {
                     ...user,
                     record: newRecord,
                 }
                 dispatch(setUser(fields))
-                save(fields)}
+                }
             }
             setAgeLimit(true)
         }
-    }
-
-    const winningListener = () => {
-        if((((user.deposit.amount * 0.13)/12) + sumRent) > (totalExp + sumCreditsPayments) * 2) {
-            setWinning(true)
-        }
-    }
-
-    const victory = ( age, prof, summ ) => {
-        if(age < user.record.age){
-            const newRecord = {
-                prof: prof,
-                age: age,
-                cashflow: summ,
-                bizCount: myBizs.length,
-                deposit: user.deposit.amount,
-                rentCount: myRents.length,
-                houseSumm: sumHouses + sumRents,
-                carSum: sumCars,
-            }
-            const fields = {
-                ...user,
-                record: newRecord,
-            }
-            dispatch(setUser(fields))
-            save(fields)
-            router.pushPage(PAGE_REGISTER)
-        } else {
-            router.pushPage(PAGE_REGISTER)
-        }
-        
     }
 
     const accruePayments = () => {
@@ -148,11 +117,14 @@ function Main({fetchedUser}) {
             age: newAge,
         }
         dispatch(setUser(fields))
-        save(fields)
     }
 
     const takeDividends = () => {
         const newBalance = user.balance + Math.round(user.deposit.amount * 0.13)
+        const newRecord = {
+            ...user.record,
+            carSum: user.record.carSum + Math.round(user.deposit.amount * 0.13),
+        }
         const newDeposit = {
             ...user.deposit,
             date: +new Date + 120000,
@@ -161,18 +133,65 @@ function Main({fetchedUser}) {
             ...user,
             balance: newBalance,
             deposit: newDeposit,
+            record: newRecord,
         }
         
         dispatch(setUser(fields))
-        save(fields)
         
+    }
+
+    const saveRecord = () => {
+        const newRecord = {
+            ...user.record,
+            carSum: 0,
+        }
+        const fields = {
+            ...user,
+            record: newRecord,
+            lifesCount: user.record.carSum,
+        }
+        dispatch(setUser(fields))
+        setRecordModal(true)
+    }
+
+    const shareRecord = (record) => {
+        bridge.send('VKWebAppShowWallPostBox', {
+            message: `У меня новый рекорд! За год прибыль составила ${record} К!!!`,
+            attachments: 'https://vk.com/app51483243'
+            })
+            .then((data) => { 
+              if (data.post_id) {
+                // Запись размещена
+              }
+            })
+            .catch((error) => {
+              // Ошибка
+              console.log(error);
+            });
     }
 
     const save = async (data) => {
 		await axios.patch(`/auth/${user._id}`, data)
     }
 
-    React.useEffect(()=>{if(user.onGame == false) router.pushPage(PAGE_PAUSE)},[user])
+    React.useEffect(() => {
+        if (user.onGame == false) router.pushPage(PAGE_PAUSE)
+        if (Number.isInteger(user.age / 12)) {
+            if (user.lifesCount < user.record.carSum) {
+                saveRecord()
+            } else {
+                const newRecord = {
+                    ...user.record,
+                    carSum: 0,
+                }
+                const fields = {
+                    ...user,
+                    record: newRecord,
+                }
+                dispatch(setUser(fields))
+            }
+        }
+    }, [user.age, recordModal])
 
     React.useEffect(() => {
         const ageInterval = setInterval(() => {
@@ -180,9 +199,10 @@ function Main({fetchedUser}) {
             ageLimitListener()
 
             user.onGame && setAgeTime((ageTime) => (ageTime >= 1198 ? 1198 : ageTime +1 ))
-            if (ageTime == 1198 ) {
-                if(user.debts >= 0){
+            if (ageTime == 1198 || ageTime == 598) {
+                if(user.debts > 0){
                     setRemind(true)
+                    dispatch(setExpenditure(10))
                 }
                 setAgeTime(0)
             }
@@ -269,7 +289,9 @@ function Main({fetchedUser}) {
 
     return (
         <Paper sx={{ width: '100vw', height: '100%', minHeight: '100vh', borderRadius:0 }}>
+            <Head name={'Главная'}/>
             <Container>
+                
             <Header fetchedUser={fetchedUser} info={Info}/>
             {user.onGame ? 
             <>
@@ -331,20 +353,21 @@ function Main({fetchedUser}) {
                 <Typography>
                     Задолженность {user.debts} K
                 </Typography><br/>
-                <Typography variant='caption'>Необходимо погасить во вкладке "Банк"</Typography>
+                <Typography variant='caption'>Необходимо погасить во вкладке "Банк"<br/>Иначе расход энергии увеличтся</Typography>
                 </Box>
             </Modal>
             <Modal
-            open={winning}
-            onClose={()=>setWinning(false)}
+            open={recordModal}
+            onClose={()=>setRecordModal(false)}
             >
                 <Box sx={style}>
                 <Typography>
-                    Поздравляем!  🥳
+                <b>Новый рекорд!</b>
                 </Typography><br/>
-                <Typography variant='caption'>Вы достигли финансовой свободы в возрасте <b>{Math.trunc(user.age/12)}</b>, с начальной профессией <b>{user.prof}</b>, 
-                с суммой пассивного дохода <b>{Math.round(((user.deposit.amount * 0.13)/12) + sumRent)}</b></Typography><br/><br/>
-                <Button onClick={()=>victory(Math.trunc(user.age/12),user.prof,Math.round(((user.deposit.amount * 0.13)/12) + sumRent))}>Начать заново</Button>
+                <Typography variant='caption'>Прибыль за этот год составила <b>{user.lifesCount}К</b><br/>Рекорд сохранен и будет отображен в <b>глобальном рейтинге</b></Typography>
+                <br/><br/>
+                <Button onClick={()=>shareRecord(user.lifesCount)}>Поделиться</Button>
+                <Button onClick={()=>setRecordModal(false)}>Закрыть</Button>
                 </Box>
             </Modal>
             <Modal

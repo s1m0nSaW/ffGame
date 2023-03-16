@@ -6,7 +6,7 @@ import HandshakeIcon from '@mui/icons-material/Handshake';
 import BizList from './shop/BizList';
 import CarList from './shop/CarList';
 import HouseList from './shop/HouseList';
-
+import Head from '../components/Head';
 import { Header } from '../components/Header';
 import BottomNav from '../components/BottomNav';
 import { PAGE_PROPERTY } from '../routers';
@@ -35,6 +35,7 @@ function Property({fetchedUser}) {
 
     return (
         <Paper sx={{ width: '100vw', height: '100%', minHeight: '100vh', borderRadius:0 }}>
+            <Head name={'Сделки'}/>
             <Container>
             <Header fetchedUser={fetchedUser} info={Info}/>
             <Tabs

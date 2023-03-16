@@ -33,10 +33,10 @@ const App = () => {
 	const location = useLocation()
 
 	useEffect(() => {
-		if (Object.keys(user).length != 0) {
-			if (user.debts > 0) { dispatch(setDebts(true)) } else { dispatch(setDebts(false)) }
-			if (user.greetingIn.length > 0) { dispatch(setGreetings(true)) } else { dispatch(setGreetings(false)) }
-		}
+		
+			if (user?.debts > 0) { dispatch(setDebts(true)) } else { dispatch(setDebts(false)) }
+			if (user?.greetingIn?.length > 0) { dispatch(setGreetings(true)) } else { dispatch(setGreetings(false)) }
+		
 	}, [user])
 
 	useEffect(() => {

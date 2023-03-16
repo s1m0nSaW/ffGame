@@ -20,9 +20,14 @@ function Rent() {
     const result = () => {
         setIsCounting(true)
 		const newBalance = user.balance + sumRent
+        const newRecord = {
+            ...user.record,
+            carSum: user.record.carSum + sumRent,
+        }
 		const fields = {
 			...user,
 			balance: newBalance,
+            record: newRecord,
 		}
 		dispatch(setUser(fields))
         setTimeLeft(0)

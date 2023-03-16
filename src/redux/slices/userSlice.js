@@ -9,6 +9,7 @@ const initialState = {
     debts: false,
     greetings: false,
     theme: 'auto',
+    expenditure: 3,
 };
 
 export const getUsers = createAsyncThunk('users/getUsers', async ( _, { rejectWithValue, dispatch }) => {
@@ -47,9 +48,12 @@ export const userSlice = createSlice({
         setTheme: ( state, action ) => {
             state.theme = action.payload
         },
+        setExpenditure: ( state, action ) => {
+            state.expenditure = action.payload
+        },
     },
 });
 
-export const { setUser, setUsers, setFriends, setDebts, setGreetings, setProfs, setTheme } = userSlice.actions;
+export const { setUser, setUsers, setFriends, setDebts, setGreetings, setProfs, setTheme, setExpenditure } = userSlice.actions;
 
 export default userSlice.reducer;

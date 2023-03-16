@@ -1,6 +1,7 @@
 import { Page, Router } from '@happysanta/router';
 import { useSelector } from 'react-redux';
 import axios from './axios.js';
+import bridge from '@vkontakte/vk-bridge'
 
 export const PAGE_INTRO = '/';
 export const PAGE_REGISTER = '/register';
@@ -38,5 +39,38 @@ const routes = {
 
 export const router = new Router(routes);
 
+let arr = [];
+
+router.on('update', (nextRote, oldRoute) => {
+	nextRote.getPageId() // /product/:id([0-9]+)
+	nextRote.getParams() // { id: "12" }
+	nextRote.getPanelId() // panel_product
+	nextRote.getViewId() // view_main
+	nextRote.getLocation() // /product/12
+	nextRote.isModal() // false
+	nextRote.isPopup() // false
+	nextRote.hasOverlay() // false
+
+    
+
+    /*if (oldRoute) {
+        arr.push(nextRote.getLocation())
+        if (arr.length == 4) {
+            bridge.send('VKWebAppCheckNativeAds', { ad_format: 'interstitial' });
+        }
+        if (arr.length == 5) {
+            bridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' })
+                .then((data) => {
+                    if (data.result)
+                        {console.log('Реклама показана');
+                        arr.length=0}
+                    else
+                        console.log('Ошибка при показе');
+                })
+                .catch((error) => { console.log(error); });
+        }
+
+    } */
+});
 
 router.start();

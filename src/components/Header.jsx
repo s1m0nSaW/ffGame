@@ -1,6 +1,7 @@
 
 import { AppBar, Avatar, Container, ListItemText, Skeleton, Toolbar, Typography, Stack, Chip, Snackbar, Button, IconButton, Badge } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
+import bridge from "@vkontakte/vk-bridge"
 
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux';
@@ -16,6 +17,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
+import AddIcon from '@mui/icons-material/Add';
 
 export const Header = ({fetchedUser, info}) => {
   const router = useRouter()
@@ -24,11 +26,15 @@ export const Header = ({fetchedUser, info}) => {
   const [openTime, setOpenTime] = React.useState(false);
   const [openAge, setOpenAge] = React.useState(false);
   const [openInfo, setOpenInfo] = React.useState(false);
+  const [openMaxEnergy, setOpenMaxEnergy] = React.useState(false);
   const [energyColor, setEnergyColor] = React.useState("default")
   const [timeLeft, setTimeLeft] = React.useState(0)
   const [enerTime, setEnerTime] = React.useState(0)
+  const [maxEnerTimeLeft, setMaxEnerTimeLeft] = React.useState(0)
+  const [maxEnerTime, setMaxEnerTime] = React.useState(0)
   const [activity, setActivity] = React.useState(<b>E</b>)
   const [freeTime, setFreeTime] = React.useState(0)
+  const [disabled, setDisabled] = React.useState(true)
   const user = useSelector((state) => state.user.user)
   const bizs = useSelector((state) => state.bizs.bizs)
   const myBizs = bizs.filter(({_id}) => user.bizs.includes(_id))
@@ -63,18 +69,41 @@ export const Header = ({fetchedUser, info}) => {
           freeEnergizerOn: true,
         }
         dispatch(setUser(fields))
-        save(fields)
       }
       setEnerTime(user.freeEnergizer - date)
       
       if (timeLeft == 100) {
         setTimeLeft(0)
       }
+
+      if (user.carsharing.status == true) {
+        setMaxEnerTimeLeft((maxEnerTimeLeft) => (maxEnerTimeLeft >= 100 ? 100 : maxEnerTimeLeft + 1))
+
+        if (date > user.carsharing.date) {
+          const carsharing = {
+            status: false,
+            date: 0,
+          }
+          const fields = {
+            ...user,
+            carsharing: carsharing,
+            maxEnergy: user.maxEnergy - 50,
+          }
+          dispatch(setUser(fields))
+        }
+
+        setMaxEnerTime(user.carsharing.date - date)
+
+        if (maxEnerTimeLeft == 100) {
+          setMaxEnerTimeLeft(0)
+        }
+      }
+
     },100)
     return () => {
         clearInterval(interval)
     }
-  },[user, setTimeLeft])
+  },[user, setTimeLeft, setMaxEnerTimeLeft])
   
   const handlePlusEnergy = () => {
     if(user.energizer > 0){
@@ -87,7 +116,6 @@ export const Header = ({fetchedUser, info}) => {
           energy: newEnergy,
         }
         dispatch(setUser(fields))
-        save(fields)
       }
     }
   }
@@ -103,42 +131,46 @@ export const Header = ({fetchedUser, info}) => {
       disabled:[], 
 		}
 		dispatch(setUser(fields))
-		save(fields)
   }
 
-  const save = async (data) => {
-		await axios.patch(`/auth/${user._id}`, data)}
+  const handleMaxEnergy = () => {
+    setOpenMaxEnergy(true)
+    bridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' })
+      .then((data) => {
+        if (data.result) {
+          setDisabled(false)
+        } else {
+          console.log('Рекламные материалы не найдены.');
+        }
+      })
+      .catch((error) => { console.log(error); /* Ошибка */ });
+  }
 
-  const textInfo = (
-    <Stack direction="column">
-      <Typography></Typography><br/>
-      <Stack direction="row" spacing={1}>
-        <BoltIcon />
-        <Typography>Энергия - расходуется каждый раз когда фиксируется прибыль от бизнеса. 
-          Купив недвижимость, не сдавая её в аренду, можно увеличить максимальное количество энергии.<br/><br/>
-          Пополнить энергию можно с помощью энергетика.
-        </Typography>
-      </Stack><br/>
-      <Stack direction="row" spacing={1}>
-        <BatteryChargingFullOutlinedIcon />
-        <Typography>Энергетик восстанавливает энергию. Каждые 24 часа предлагается 2 бесплатных энергетика, 
-          их колисество можно увеличить до 10, выполнив некоторые условия в настройках.
-          Энергия - расходуется каждый раз когда фиксируется прибыль от бизнеса.
-        </Typography>
-      </Stack><br/>
-      <Stack direction="row" spacing={1}>
-        <QueryBuilderOutlinedIcon />
-        <Typography> Время необходимо для покупки бизнеса. Общее количество времени 10 ч. Увеличить его можно купив транспорт.
-        </Typography>
-      </Stack><br/>
-      <Stack direction="row" spacing={1}>
-        <HourglassEmptyIcon />
-        <Typography>Возраст игрока на данный момент, по достижении 60 лет игра заканчивается.
-        </Typography>
-      </Stack>
-    </Stack>
-  )
+  const showAd = () => {
+    bridge.send('VKWebAppShowNativeAds', { ad_format: 'reward' })
+      .then((data) => {
+        if (data.result) // Успех
+        {
+          setOpenMaxEnergy(false)
+          const date = +new Date
+          const carsharing = {
+            status: true,
+            date: date + 3600000,
+          }
+          const fields = {
+            ...user,
+            carsharing: carsharing,
+            maxEnergy: user.maxEnergy + 50
+          }
+          dispatch(setUser(fields))
+        }
+        else // Ошибка 
+          console.log('Ошибка при показе');
+      })
+      .catch((error) => { console.log(error); })
+  }
 
+  //проверка даты каршеринга макс энергии
   const action = (
     <React.Fragment>
       <IconButton
@@ -151,6 +183,22 @@ export const Header = ({fetchedUser, info}) => {
           setOpenTime(false)
           setOpenInfo(false)
         }}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
+
+  const action2 = (
+    <React.Fragment>
+      <Button disabled={disabled} color="secondary" size="small" onClick={()=>showAd()}>
+        СМОТРЕТЬ
+      </Button>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={()=>setOpenMaxEnergy(false)}
       >
         <CloseIcon fontSize="small" />
       </IconButton>
@@ -178,7 +226,7 @@ export const Header = ({fetchedUser, info}) => {
   }
 
   return (
-      <AppBar component="nav" color="inherit" sx={{padding:'10px', borderRadius:'10px', top: 10, marginBottom: '10px'}} position='sticky'>
+      <AppBar component="nav" color="inherit" sx={{padding:'10px', borderRadius:'10px', marginTop:'10px', marginBottom: '10px'}} position='sticky'>
         {fetchedUser ?
         <Toolbar disableGutters>
           <Stack direction="column" sx={{ width: '100%' }} >
@@ -233,14 +281,31 @@ export const Header = ({fetchedUser, info}) => {
                 color="warning" 
               />
             </Stack>
-            <Stack 
+            <Stack
               direction="row"
-              sx={{ marginTop: '15px'}}>
-                {user.freeEnergizerOn ? <Chip label={<b>Энергетики +{user.freeEnergizerCount}</b>} onClick={()=>handleFreeEnergy()} color="primary" icon={<BatteryChargingFullOutlinedIcon />} size="small" />:
-                <Chip label={`Бесплатные через ${parseMillisecondsIntoReadableTime(enerTime)}`} icon={<BatteryChargingFullOutlinedIcon />} size="small" />}
-                <InfoOutlinedIcon onClick={()=>setOpenInfo(true)} color="primary" sx={{marginLeft:'auto'}}/>
+              sx={{ marginTop: '15px' }}>
+              <Stack
+                direction="row"
+                spacing={1}>
+                {user.freeEnergizerOn ?
+                  <Chip label={<b>Энергетики +{user.freeEnergizerCount}</b>} onClick={() => handleFreeEnergy()} color="primary" icon={<BatteryChargingFullOutlinedIcon />} size="small" /> :
+                  <Chip label={`Бесплатные через ${parseMillisecondsIntoReadableTime(enerTime)}`} icon={<BatteryChargingFullOutlinedIcon />} size="small" />
+                }
+                {!user.carsharing.status ? <Chip 
+                disabled={user.carsharing.status}
+                label={<Stack 
+                  direction="row"
+                  justifyContent="flex-start"
+                  alignItems="center"><b>MAX</b><BoltIcon  fontSize="small" sx={{ color: 'black' }}/></Stack>} 
+                onClick={() => handleMaxEnergy()} 
+                color="primary" 
+                icon={<AddIcon  fontSize="small" sx={{ color: 'black' }} />} 
+                size="small" />:
+                <Chip label={parseMillisecondsIntoReadableTime(maxEnerTime)} icon={<BoltIcon />} size="small" />}
               </Stack>
+              <InfoOutlinedIcon onClick={() => setOpenInfo(true)} color="primary" sx={{ marginLeft: 'auto' }} />
             </Stack>
+          </Stack>
         </Toolbar> : 
         <Toolbar> 
           <Skeleton variant="circular" width={40} height={40} animation="wave" /> 
@@ -279,6 +344,13 @@ export const Header = ({fetchedUser, info}) => {
             onClose={()=>setOpenInfo(false)}
             message={info}
             action={action}
+          />
+          <Snackbar
+            open={openMaxEnergy}
+            onClose={()=>setOpenMaxEnergy(false)}
+            message={<><BoltIcon/><Typography>Можете увеличить максимальное количество энергии на 50 в течении одного часа, посмотрев рекламный ролик
+            </Typography></>}
+            action={action2}
           />
         </div>
       </AppBar>

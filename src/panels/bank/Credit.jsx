@@ -52,7 +52,7 @@ function Credit() {
             credits: myCredits.sort((x, y) => x.id - y.id),
 		}
 		dispatch(setUser(fields))
-		save(fields)}
+		}
     }
 
     const save = async (data) => {
@@ -71,7 +71,7 @@ function Credit() {
                 credits: myCredits.sort((x, y) => x.id - y.id),
             }
             dispatch(setUser(fields))
-            save(fields)
+            
         }
     }
 

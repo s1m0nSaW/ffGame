@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import { setUser } from '../../redux/slices/userSlice';
+import { setUser, setExpenditure } from '../../redux/slices/userSlice';
 import axios from '../../axios.js'
 
 import { IconButton, Toolbar, Typography, Stack, List, ListItem, ListItemText, ListItemButton, Container, Button, Modal, Box } from '@mui/material';
@@ -51,7 +51,8 @@ function Report() {
       debts: 0,
 		}
     dispatch(setUser(fields))
-		save(fields)}
+    dispatch(setExpenditure(3))
+		}
   };
 
   const payCreditDebt = (_id, amount, summ, payment) => {
@@ -76,7 +77,6 @@ function Report() {
             credits: [...myCredits, newCredit].sort((x, y) => x.id - y.id),
           }
           dispatch(setUser(fields))
-          save(fields)
         } else {
           const fields = {
             ...user,
@@ -84,7 +84,6 @@ function Report() {
             credits: myCredits.sort((x, y) => x.id - y.id),
           }
           dispatch(setUser(fields))
-          save(fields)
         }
     }
 }

@@ -21,7 +21,6 @@ function Friend({friend, invisible, disabled }) {
                 energizer: user.energizer + 1,
             }
             dispatch(setUser(fields))
-            save(fields)
             const friendFields = {
                 ...friend,
                 greetingOut: friend.greetingOut.filter((id) => id !== user.userId),
@@ -35,7 +34,6 @@ function Friend({friend, invisible, disabled }) {
                 greetingOut: [...user.greetingOut, userId],
             }
             dispatch(setUser(fields))
-            save(fields)
             const friendFields = {
                 ...friend,
                 greetingIn: [...friend.greetingIn, user.userId],
@@ -72,7 +70,7 @@ function Friend({friend, invisible, disabled }) {
             <ListItemText
                 primary={<Typography variant="subtitle1">{friend.firstName}</Typography>}
                 secondary={
-                        <Typography variant='caption'>Рекорд: {friend.record.cashflow} K</Typography>
+                        <Typography variant='caption'>Рекорд: {friend.lifesCount} K/год</Typography>
                     }
             />
         </ListItem>
@@ -101,12 +99,8 @@ function Friend({friend, invisible, disabled }) {
                         <Typography variant='caption'><b> {friend.record.rentCount}</b></Typography>
                     </Stack>
                     <Stack justifyContent="space-between" alignItems="flex-start" direction={'row'}>
-                        <Typography variant='caption'>Стоимость недвижимости:</Typography>
+                        <Typography variant='caption'>Стоимость собственности:</Typography>
                         <Typography variant='caption'><b> {friend.record.houseSumm} К</b></Typography>
-                    </Stack>
-                    <Stack justifyContent="space-between" alignItems="flex-start" direction={'row'}>
-                        <Typography variant='caption'>Стоимость транспорта:</Typography>
-                        <Typography variant='caption'><b> {friend.record.carSum} К</b></Typography>
                     </Stack>
                 </Stack>
             </ListItem>

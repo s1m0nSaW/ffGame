@@ -46,7 +46,6 @@ function Deposit() {
             deposit: newDeposit,
 		}
 		dispatch(setUser(fields))
-		save(fields)
     }
 
     const withdraw = () => {
@@ -63,7 +62,6 @@ function Deposit() {
             deposit: newDeposit,
 		}
 		dispatch(setUser(fields))
-		save(fields)
     }
 
     const save = async (data) => {

@@ -31,7 +31,6 @@ function CarLot({car,isMy}) {
                 time: 14,
             }
             dispatch(setUser(fields))
-            save(fields)
         } else {
             const fields = {
                 ...user,
@@ -41,7 +40,6 @@ function CarLot({car,isMy}) {
                 time: myTime,
             }
             dispatch(setUser(fields))
-            save(fields)
         }
     }
 
@@ -60,8 +58,6 @@ function CarLot({car,isMy}) {
                     time: 10,
                 }
                 dispatch(setUser(fields))
-                save(fields)
-                console.log('1')
             } else if(myTime > 14){
                 const fields = {
                     ...user,
@@ -71,8 +67,6 @@ function CarLot({car,isMy}) {
                     time: 14,
                 }
                 dispatch(setUser(fields))
-                save(fields)
-                console.log('2')
             } else {
                 const fields = {
                     ...user,
@@ -82,8 +76,6 @@ function CarLot({car,isMy}) {
                     time: myTime,
                 }
                 dispatch(setUser(fields))
-                save(fields)
-                console.log('3')
             }
         } else {
             const lastCarTime = carsTime - car.time
@@ -97,8 +89,6 @@ function CarLot({car,isMy}) {
                     time: 10,
                 }
                 dispatch(setUser(fields))
-                save(fields)
-                console.log('4')
             }else if(myTime > 14){
                 const fields = {
                     ...user,
@@ -108,8 +98,6 @@ function CarLot({car,isMy}) {
                     time: 14,
                 }
                 dispatch(setUser(fields))
-                save(fields)
-                console.log('5')
             } else {
                 const fields = {
                     ...user,
@@ -119,8 +107,6 @@ function CarLot({car,isMy}) {
                     time: myTime,
                 }
                 dispatch(setUser(fields))
-                save(fields)
-                console.log('6')
             }
         }
         

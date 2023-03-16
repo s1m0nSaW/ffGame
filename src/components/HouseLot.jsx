@@ -37,7 +37,6 @@ function HouseLot({house, isMy, isRent}) {
             maxEnergy: myEnergy,
         }
         dispatch(setUser(fields))
-        save(fields)
     }
 
     const sellHouse = () => {
@@ -52,7 +51,6 @@ function HouseLot({house, isMy, isRent}) {
                 maxEnergy: myEnergy,
             }
             dispatch(setUser(fields))
-            save(fields)
         } else {
             const myHouse = rentHouses.filter((house) => house._id !== isMy)
             const myEnergy = user.maxEnergy - house.energy
@@ -63,7 +61,6 @@ function HouseLot({house, isMy, isRent}) {
                 maxEnergy: myEnergy,
             }
             dispatch(setUser(fields))
-            save(fields)
         }
 	}
 
@@ -82,7 +79,6 @@ function HouseLot({house, isMy, isRent}) {
                 rent: rentHouse,
             }
             dispatch(setUser(fields))
-            save(fields)
         } else {
             const fields = {
                 ...user,
@@ -91,7 +87,6 @@ function HouseLot({house, isMy, isRent}) {
                 rent: rentHouse,
             }
             dispatch(setUser(fields))
-            save(fields)
         }
 	}
     
@@ -106,7 +101,6 @@ function HouseLot({house, isMy, isRent}) {
             rent: rentHouse.map(item => item._id),
 		}
 		dispatch(setUser(fields))
-		save(fields)
 	}
 
     const save = async (data) => {

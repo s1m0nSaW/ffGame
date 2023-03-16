@@ -9,6 +9,10 @@ function Record() {
     <Box sx={{ width: '100%' }} >
       <Stack direction={'column'} sx={{ width: '100%' }}>
         <Stack justifyContent="space-between" alignItems="flex-start" direction={'row'}>
+          <Typography variant='body2'>Рекордная прибыль:</Typography>
+          <Typography variant='body2'><b> {user.lifesCount} К/год</b></Typography>
+        </Stack>
+        <Stack justifyContent="space-between" alignItems="flex-start" direction={'row'}>
           <Typography variant='caption'>Деятельность:</Typography>
           <Typography variant='caption'><b> {user.record.prof}</b></Typography>
         </Stack>
@@ -29,12 +33,8 @@ function Record() {
           <Typography variant='caption'><b> {user.record.rentCount}</b></Typography>
         </Stack>
         <Stack justifyContent="space-between" alignItems="flex-start" direction={'row'}>
-          <Typography variant='caption'>Стоимость недвижимости:</Typography>
+          <Typography variant='caption'>Стоимость собственности:</Typography>
           <Typography variant='caption'><b> {user.record.houseSumm} К</b></Typography>
-        </Stack>
-        <Stack justifyContent="space-between" alignItems="flex-start" direction={'row'}>
-          <Typography variant='caption'>Стоимость транспорта:</Typography>
-          <Typography variant='caption'><b> {user.record.carSum} К</b></Typography>
         </Stack>
       </Stack>
     </Box>

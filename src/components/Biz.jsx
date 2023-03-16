@@ -54,6 +54,7 @@ function Biz({ biz }) {
     const [ isCounting, setIsCounting ] = React.useState(true)
     const dispatch = useDispatch()
     const user = useSelector((state) => state.user.user)
+    const expenditure = useSelector((state) => state.user.expenditure)
 	const bizs = useSelector((state) => state.bizs.bizs)
     const myBizs = bizs.filter(({_id}) => user.bizs.includes(_id))
     const bizTime = myBizs.map(item => item.requiredTime).reduce((prev, curr) => prev + curr, 0)
@@ -91,18 +92,26 @@ function Biz({ biz }) {
 		setProfit(p)
 	}
 
+    React.useEffect(()=>{
+
+    },[user])
+
     const handleStart = (price,requiredEnergy) => {
         setIsCounting(true)
         if (timeLeft == 10)setTimeLeft(0)
         const newBalance = user.balance + price
-        const newEnergy = user.energy - 3
+        const newEnergy = user.energy - expenditure
+        const newRecord = {
+            ...user.record,
+            carSum: user.record.carSum + price,
+        }
         const fields = {
 			...user,
 			balance: newBalance,
             energy: newEnergy,
+            record: newRecord,
 		}
 		dispatch(setUser(fields))
-        save(fields)
     }
 
     const sellBiz = ( id, price) => {
@@ -114,7 +123,6 @@ function Biz({ biz }) {
 			bizs: myNewBizs.map(item => item._id)
 		}
 		dispatch(setUser(fields))
-		save(fields)
 	}
 
     const pause = () => {
@@ -125,8 +133,6 @@ function Biz({ biz }) {
             datePoint: date + 300000
         }
         dispatch(setUser(fields))
-		save(fields)
-        //router.pushPage(PAGE_PAUSE)
     }
 
     const save = async (data) => {

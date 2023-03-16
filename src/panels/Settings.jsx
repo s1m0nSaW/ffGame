@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setTheme, setUser } from '../redux/slices/userSlice'
 import { useRouter } from '@happysanta/router'
 import axios from '../axios.js'
+import Head from '../components/Head'
 
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import BrightnessAutoIcon from '@mui/icons-material/BrightnessAuto'
@@ -19,6 +20,7 @@ function Settings({fetchedUser}) {
   const [checkPost, setCheckPost] = React.useState(false)
   const [checkGroup, setCheckGroup] = React.useState(false)
   const [checkMessages, setCheckMessages] = React.useState(false)
+  const [checkNotifications, setCheckNotifications] = React.useState(false)
 
   const handleTheme = (event, newTheme) => {
     if (newTheme !== null) {
@@ -60,14 +62,27 @@ function Settings({fetchedUser}) {
   }
 
   async function recommend() {
-    bridge.send('VKWebAppShowWallPostBox', {
-      message: 'Попробуй себя в роли среднестатистического жителя России, который решил добиться финансовой свободы',
-      attachments: 'https://vk.com/app51483243'
-      })
+    bridge.send('VKWebAppAddToFavorites')
       .then((data) => { 
-        if (data.post_id) {
+        if (data.result) {
           // Запись размещена
           setCheckPost(true)
+        }
+      })
+      .catch((error) => {
+        // Ошибка
+        console.log(error);
+      });
+  }
+
+  async function notifications() {
+    bridge.send('VKWebAppAllowNotifications')
+      .then((data) => {
+        if (data.result) {
+          // Разрешение на отправку уведомлений мини-приложением или игрой получено
+          setCheckNotifications(true)
+        } else {
+          // Ошибка
         }
       })
       .catch((error) => {
@@ -85,7 +100,7 @@ function Settings({fetchedUser}) {
       setCheckPost(true)
       setCheckGroup(true)
       setCheckMessages(true)
-    } else if (checkGroup == true && checkPost == true && checkMessages == true) {
+    } else if (checkGroup == true && checkPost == true && checkMessages == true && checkNotifications == true) {
       const fields = {
         ...user,
         freeEnergizerCount: 10,
@@ -98,6 +113,7 @@ function Settings({fetchedUser}) {
 
   return (
     <Paper sx={{ width: '100vw', height: '100%', minHeight: '100vh', borderRadius: 0 }}>
+      <Head name={'Настройки'}/>
       <Stack
         sx={{ width: '100vw', height: '100vh' }}
         direction="column"
@@ -128,12 +144,16 @@ function Settings({fetchedUser}) {
             {checkGroup?<Checkbox disabled checked />:<Button onClick={()=>joinGroup()}>Подписаться</Button>}
           </Stack>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography variant='caption'>Подпишись на уведомления</Typography>
+            <Typography variant='caption'>Подпишись на лс от сообщества</Typography>
             {checkMessages?<Checkbox disabled checked />:<Button onClick={()=>messagesFromGroup()}>Подписаться</Button>}
           </Stack>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography variant='caption'>Поделись на стене</Typography>
-            {checkPost?<Checkbox disabled checked />:<Button onClick={()=>recommend()}>Поделиться</Button>}
+            <Typography variant='caption'>Подпишись на уведомления</Typography>
+            {checkNotifications?<Checkbox disabled checked />:<Button onClick={()=>notifications()}>Подписаться</Button>}
+          </Stack>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Typography variant='caption'>Добавь в избранное</Typography>
+            {checkPost?<Checkbox disabled checked />:<Button onClick={()=>recommend()}>Добавить</Button>}
           </Stack>
           <Stack sx={{ marginTop: "15px"}} direction="row" justifyContent="center" alignItems="center">
             <Button onClick={()=>router.popPage()}>Назад</Button>
